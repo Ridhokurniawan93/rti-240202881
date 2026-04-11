@@ -66,8 +66,8 @@ Studi di `paper.md` menunjukkan dua pendekatan sekaligus:
 ## Template A.1 — Research Mindset Self-Assessment
 
 ```
-Nama Peneliti    : ____________________
-Tanggal          : ____________________
+Nama Peneliti    : Ridho Kurniawan
+Tanggal          : 11 April 2026
 
 1. Ketika membaca klaim "metode X 95% akurat":
    - Pertanyaan pertama saya: Apakah data dan metode pengujian sudah dijelaskan secara lengkap?
