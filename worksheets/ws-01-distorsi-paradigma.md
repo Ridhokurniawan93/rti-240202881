@@ -62,8 +62,7 @@ Studi di `paper.md` menunjukkan dua pendekatan sekaligus:
 
 ---
 
-## Template A.1 — Research Mindset Self-Assessment
-
+## Research Mindset Self-Assessment
 ```
 Nama Peneliti    : Ridho Kurniawan
 Tanggal          : 11 April 2026
