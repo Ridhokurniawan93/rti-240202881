@@ -13,7 +13,7 @@ Pengetahuan ilmiah tidak muncul langsung dari kenyataan. Ia melewati **6 tahap t
 Reality → Data → Processing → Analysis → Inference → Knowledge
 ```
 
-Contoh dari `paper.md`: observasi sistem penggajian manual di Politeknik Ganesha Guru menghasilkan data pegawai dan gaji. Distorsi dapat terjadi jika data yang dikumpulkan tidak lengkap, jika input data dimasukkan secara salah, atau jika simpulan dibuat tanpa evaluasi nyata.
+Contoh: observasi sistem penggajian manual di Politeknik Ganesha Guru menghasilkan data pegawai dan gaji. Distorsi dapat terjadi jika data yang dikumpulkan tidak lengkap, jika input data dimasukkan secara salah, atau jika simpulan dibuat tanpa evaluasi nyata.
 
 Etika mencegah distorsi yang disengaja (fabrikasi, cherry-picking). Validitas mendeteksi distorsi yang tidak disengaja (confounding variable, sampling bias).
 
@@ -53,7 +53,7 @@ Studi di `paper.md` menunjukkan dua pendekatan sekaligus:
 
 ---
 
-## Contoh Ringkas dari `paper.md`
+## Contoh Ringkas
 
 - Masalah utama: sistem penggajian di Kampus Politeknik Ganesha Guru masih manual, menyebabkan redundansi data dan kesalahan perhitungan.
 - Solusi: sistem informasi penggajian berbasis PHP dan MySQL dengan metode Extreme Programming.
