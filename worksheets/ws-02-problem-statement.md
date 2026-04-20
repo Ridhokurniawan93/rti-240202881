@@ -27,13 +27,13 @@ Reality → Observed Issue (Symptom) → Diagnosed Problem (Root Cause)
 
 Apa yang diamati (gejala) ≠ mengapa terjadi (akar masalah). Gunakan **5 Whys** atau **Fishbone Diagram** untuk menggali.
 
-Contoh dari `paper.md`: "Proses penggajian lambat dan banyak kesalahan" (symptom) → "Sistem manual menyebabkan redundansi data, kesalahan perhitungan, dan kurangnya transparansi" (root cause).
+Contoh: "Proses penggajian lambat dan banyak kesalahan" (symptom) → "Sistem manual menyebabkan redundansi data, kesalahan perhitungan, dan kurangnya transparansi" (root cause).
 
 ### System Thinking
 
 Setiap masalah riset TI harus terikat pada komponen sistem: **Input → Process → Output → Outcome → Constraints → Stakeholders**.
 
-Dalam konteks `paper.md`: Input (data pegawai, data gaji), Process (perhitungan manual), Output (slip gaji), Outcome (penggajian yang tepat), Constraints (keterbatasan SDM, keterbukuan, regularitas pemerintah), Stakeholders (Admin, Direktur, Pegawai, Dosen).
+konteks: Input (data pegawai, data gaji), Process (perhitungan manual), Output (slip gaji), Outcome (penggajian yang tepat), Constraints (keterbatasan SDM, keterbukuan, regularitas pemerintah), Stakeholders (Admin, Direktur, Pegawai, Dosen).
 
 ### Problem Quality Check
 
