@@ -27,7 +27,7 @@ Etika mencegah distorsi yang disengaja (fabrikasi, cherry-picking). Validitas me
 
 ### Paradigma Riset
 
-Studi di `paper.md` menunjukkan dua pendekatan sekaligus:
+Studi menunjukkan dua pendekatan sekaligus:
 - **Positivis**: mengukur efisiensi dan akurasi secara kuantitatif melalui pengujian dan evaluasi sistem.
 - **Design Science**: mengembangkan artefak sistem informasi penggajian sebagai alat untuk menguji hipotesis peningkatan efisiensi.
 
