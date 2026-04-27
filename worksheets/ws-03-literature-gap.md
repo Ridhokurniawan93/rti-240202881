@@ -17,7 +17,7 @@ Literature review bukan merangkum paper satu per satu. Pendekatan yang benar ada
 
 ### Empat Jenis Research Gap
 
-| Jenis Gap | Deskripsi | Contoh dari paper.md |
+| Jenis Gap | Deskripsi | Contoh |
 |-----------|----------|--------|
 | **Performance Gap** | Performa belum memadai | Belum ada metrik spesifik untuk akurasi sistem penggajian akademik |
 | **Method Gap** | Pendekatan belum diterapkan | XP belum diterapkan di institusi akademik |
