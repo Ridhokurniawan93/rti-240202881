@@ -10,7 +10,7 @@
 
 Literature review bukan merangkum paper satu per satu. Pendekatan yang benar adalah **concept-centric** — organisasi berdasarkan tema, metode, atau variabel. Tujuan: menemukan **pola, kontradiksi, dan gap**.
 
-Dalam konteks `paper.md`, literatur diorganisir dalam 3 konsep utama:
+   literatur diorganisir dalam 3 konsep utama:
 1. **Sistem Informasi Penggajian** — definisi, komponen, manfaat teknologi
 2. **Extreme Programming (XP)** — metodologi, prinsip, hasil implementasi
 3. **Penelitian Terkait** — studi sebelumnya pada konteks berbeda
@@ -37,7 +37,7 @@ Gap terkuat dari paper.md = **Context Gap** + **Method Gap**: XP belum diimpleme
 
 ### Baseline Selection — 3 Kriteria
 
-| Kriteria | Pertanyaan | Contoh dari paper.md |
+| Kriteria | Pertanyaan | Contoh |
 |----------|-----------|--------|
 | **Relevan** | Apakah menyelesaikan masalah yang sama? | Agus & Gustiawan [13] relevan: XP untuk sistem penggajian, meski di konteks berbeda |
 | **Representatif** | Apakah mewakili common practice? | Semua studi terkait pakai XP atau Agile, bukan waterfall → XP adalah baseline yang tepat |
