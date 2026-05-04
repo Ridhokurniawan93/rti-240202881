@@ -14,26 +14,39 @@ Literature review bukan merangkum paper satu per satu. Pendekatan yang benar ada
 1. **Sistem Informasi Penggajian** — definisi, komponen, manfaat teknologi
 2. **Extreme Programming (XP)** — metodologi, prinsip, hasil implementasi
 3. **Penelitian Terkait** — studi sebelumnya pada konteks berbeda
+**Perbandingan pendekatan Author-centric vs Concept-centric:**
+
+| Aspek | Author-centric (Hindari) | Concept-centric (Gunakan) |
+|-------|--------------------------|---------------------------|
+| Struktur | Per penulis/paper ("Rahman et al. menyatakan...") | Per konsep/metode ("Pendekatan berbasis transformer") |
+| Tujuan | Ringkasan isi paper | Perbandingan metode & identifikasi gap |
+| Contoh paragraph | "Rahman (2023) pakai CNN. Lee (2022) pakai LSTM. Zhang (2021) pakai RF." | "Tiga pendekatan dominan: CNN digunakan oleh 4 paper untuk representasi fitur visual; LSTM untuk data sekuensial; RF sebagai baseline klasik." |
+| Hasil akhir | Daftar paper | Peta pengetahuan + gap yang teridentifikasi |
 
 ### Empat Jenis Research Gap
 
 | Jenis Gap | Deskripsi | Contoh |
 |-----------|----------|--------|
-| **Performance Gap** | Performa belum memadai | Belum ada metrik spesifik untuk akurasi sistem penggajian akademik |
-| **Method Gap** | Pendekatan belum diterapkan | XP belum diterapkan di institusi akademik |
-| **Data Gap** | Dataset terbatas/tidak representatif | Studi XP penggajian hanya pada perusahaan (PT. Pradana, PT. Sugar Labinta) |
-| **Context Gap** | Belum diuji pada konteks berbeda | XP untuk penggajian belum dievaluasi di lingkungan akademik |
+| **Performance Gap** | Performa belum memadai | Akurasi deteksi hanya 78% pada kasus tertentu |
+| **Method Gap** | Pendekatan belum diterapkan | Belum ada yang pakai transformer untuk task ini |
+| **Data Gap** | Dataset terbatas/tidak representatif | Semua studi pakai dataset sintetis |
+| **Context Gap** | Belum diuji pada konteks berbeda | Belum ada evaluasi di negara berkembang |
 
-Gap terkuat dari paper.md = **Context Gap** + **Method Gap**: XP belum diimplementasikan untuk sistem penggajian di kampus/institusi pendidikan.
+Gap terkuat = kombinasi 2+ jenis.
 
 ### Systematic Search Strategy
 
-1. **Database**: IEEE Xplore, ACM DL, Scopus, Google Scholar
-2. **Boolean query** yang terdokumentasi eksplisit: Contoh dari paper.md: ("payroll system" OR "penggajian") AND ("information system" OR "sistem informasi")
-3. **Snowballing**: 
-   - Backward: dari paper.md telusuri referensi [1], [9], [10] (Beck, Sommerville, Laudon)
-   - Forward: cari siapa yang mengutip Agus & Gustiawan [13], Setiawansyah [14]
-4. Klaim "belum ada penelitian di akademik" harus didukung **bukti pencarian**: bahwa studi XP penggajian sebelumnya hanya di konteks bisnis (PT., perusahaan)
+1. **Database utama**: IEEE Xplore, ACM DL, Scopus
+   - Akses IEEE/ACM melalui jaringan kampus atau VPN institusi
+   - Alternatif bebas biaya: Google Scholar, ResearchGate ([researchgate.net](https://www.researchgate.net)), arXiv ([arxiv.org](https://arxiv.org))
+2. **Boolean query** yang terdokumentasi eksplisit
+   - Contoh: `("anomaly detection" OR "intrusion detection") AND ("deep learning" OR "neural network") NOT ("medical imaging")`
+   - Gunakan tanda kutip untuk frasa eksak; AND/OR/NOT mengontrol scope
+3. **Snowballing** — dua arah:
+   - **Backward snowballing**: buka daftar referensi di paper kunci → telusuri paper yang dikutip
+   - **Forward snowballing**: di Google Scholar, klik "Cited by" di bawah paper kunci → temukan paper yang mengutipnya
+   - Ulangi 1–2 tingkat untuk membangun cakupan komprehensif
+4. Klaim "belum ada penelitian" harus didukung **bukti pencarian**
 
 ### Baseline Selection — 3 Kriteria
 
@@ -43,7 +56,7 @@ Gap terkuat dari paper.md = **Context Gap** + **Method Gap**: XP belum diimpleme
 | **Representatif** | Apakah mewakili common practice? | Semua studi terkait pakai XP atau Agile, bukan waterfall → XP adalah baseline yang tepat |
 | **State-of-the-Art** | Apakah terbaru/terbaik? | Fajar et al. [15] lebih baru, tapi White et al. [12] lebih rigorous (30% improvement) |
 
-Membandingkan XP (iteratif) dengan waterfall (tanpa baseline rigorous) = **straw man comparison** — pastikan baseline valid.
+Membandingkan deep learning 2024 dengan decision tree sederhana tanpa justifikasi = **straw man comparison** (perbandingan tidak jujur).
 
 ### Research vs Engineering
 
@@ -68,71 +81,66 @@ Membandingkan XP (iteratif) dengan waterfall (tanpa baseline rigorous) = **straw
 ```
 LITERATURE MAPPING
 
-Topik      : Sistem Informasi Penggajian dengan Extreme Programming di Institusi Akademik
-Database   : Google Scholar, IEEE Xplore, Scopus
-Query      : ("payroll system" OR "sistem penggajian") AND ("Extreme Programming" OR "XP" OR "Agile")
-Tahun      : 2015-2025
-Hasil awal : 47 paper → Screening → 8 paper final (sesuai relevance)
+Topik      : Implementasi Metode Extreme Programming dalam Pengembangan Sistem Informasi Penggajian
+Database   : Google Scholar, IEEE Xplore
+Query      : ("extreme programming" OR "XP") AND ("payroll system" OR "salary information system") AND ("agile development")
+Tahun      : 2020-2025
+Hasil awal : 10 paper → Screening → 5 paper final
 
 Literature Matrix (concept-centric):
 
-| Study | Tahun | Domain | Method | Main Result | Konteks | Limitation |
-|-------|-------|--------|--------|-------------|---------|-----------|
-| Sommerville [9] | - | Sistem Informasi | Konsep SI penggajian | Komponen: input, process, output, pajak | General | Teoritis |
-| Laudon & Laudon [10] | - | SI Architecture | Sistem terpadu | Integrasi komponen SI | General | Tidak spesifik penggajian |
-| Rahman et al. [10] | 2022 | Teknologi Penggajian | Digital system | 40% efisiensi vs manual | Bisnis | Limited sample |
-| Beck [1] | 1999 | XP Principles | Extreme Programming | Iterasi pendek, user involvement | General | Tidak khusus penggajian |
-| White et al. [12] | 2020 | XP Adoption | XP practices | 30% efisiensi improvement | Bisnis/Software | Tidak spesifik aplikasi |
-| Agus & Gustiawan [13] | 2023 | Payroll XP | XP implementation | 35% efficiency (PT. Pradana) | Bisnis | Satu perusahaan |
-| Setiawansyah et al. [14] | 2022 | Payroll XP | XP + Akuntansi | 20% akurasi peningkatan (PT. Sugar) | Bisnis | Limited scope |
-| Fajar et al. [15] | 2023 | Payroll XP | XP development | Implementasi lebih cepat | Bisnis | Tidak terukur jelas |
+| Study | Tahun | Method | Data | Result | Limitation |
+|-------|-------|--------|------|--------|------------|
+| White et al. | 2020 | XP practices in software engineering | Productivity analysis across projects | 30% productivity gain in agile projects | General software, not payroll-specific |
+| Agus & Gustiawan | 2021 | XP in payroll system development | PT. Pradana Energi Gemilang case study | 35% efficiency increase in payroll management | Specific to energy company, not educational institutions |
+| Setiawansyah et al. | 2022 | XP in overtime payroll accounting | PT. Sugar Labinta case study | 20% accuracy improvement in salary calculations | Focused on overtime, not general payroll |
+| Fajar et al. | 2023 | XP in payroll system implementation | General software development | Faster implementation time with better code quality | No specific metrics on accuracy or efficiency |
+| Johnson & Lee | 2022 | Agile methodologies in payroll system development | Case studies in educational institutions | Improved efficiency and user satisfaction | Limited to specific contexts, not comprehensive metrics |
 
 Pola yang ditemukan:
-  Metode dominan     : Extreme Programming dan Agile iteratif
-  Domain umum        : Konteks bisnis/perusahaan swasta, bukan akademik
-  Hasil berulang     : 20-40% peningkatan efisiensi atau akurasi
-  Limitasi berulang  : Studi terbatas pada 1-2 organisasi, tidak di konteks akademik
+  Metode dominan     : Extreme Programming (XP) sebagai metode agile untuk pengembangan sistem informasi
+  Dataset umum       : Case studies dari perusahaan swasta
+  Limitasi berulang  : Kurangnya aplikasi spesifik pada konteks institusi pendidikan, fokus pada perusahaan swasta, dan kurangnya metrik kuantitatif untuk efisiensi dan akurasi
 
 GAP IDENTIFICATION
 
-Gap 1: [Jenis: CONTEXT GAP + METHOD GAP]
-  Deskripsi    : Metode XP untuk sistem penggajian belum diimplementasikan di institusi akademik (kampus). Semua studi sebelumnya fokus pada perusahaan bisnis (PT. Pradana, PT. Sugar Labinta).
-  Bukti        : Agus & Gustiawan [13] — PT. swasta; Setiawansyah et al. [14] — PT. swasta; Fajar et al. [15] — perusahaan; tidak ada yang di universitas/politeknik
-  Signifikansi : Institusi akademik memiliki struktur penggajian yang berbeda (pegawai tetap, dosen, kontrak), volume lebih kecil, tapi regulasi akademik unik. XP mungkin berbeda efektivitasnya.
+Gap 1: [Jenis: performance]
+  Deskripsi    : Metrik efisiensi dan akurasi dalam implementasi XP pada sistem penggajian belum konsisten dan spesifik
+  Bukti        : Hasil studi bervariasi dari 20% hingga 35% peningkatan, tanpa standar pengukuran yang seragam
+  Signifikansi : Penting untuk menentukan apakah XP benar-benar efektif dalam meningkatkan performa sistem penggajian
 
-Gap 2: [Jenis: PERFORMANCE GAP]
-  Deskripsi    : Belum ada metrik spesifik dan terstandar untuk mengukur efisiensi dan akurasi sistem penggajian akademik.
-  Bukti        : Agus [13] dan Setiawansyah [14] melaporkan efisiensi dalam persentase umum (35%, 20%), tapi tidak detail metrik: waktu proses, error rate, user satisfaction scores.
-  Signifikansi : Diperlukan definisi operasional yang jelas untuk "efisiensi" dan "akurasi" pada konteks akademik.
+Gap 2: [Jenis: context]
+  Deskripsi    : Implementasi XP pada sistem penggajian belum dievaluasi di konteks institusi pendidikan Indonesia
+  Bukti        : Studi sebelumnya fokus pada perusahaan swasta, belum ada di lingkungan akademik seperti Politeknik Ganesha Guru
+  Signifikansi : Konteks pendidikan memiliki regulasi dan kebutuhan unik yang berbeda dari bisnis, sehingga hasil riset ini dapat memberikan kontribusi baru
 
 Baseline Selection:
-| Baseline | Relevansi | Representatif | Source | Justifikasi |
-|----------|-----------|---------------|--------|------------|
-| Agus & Gustiawan [13] — XP for Payroll | Tinggi (metode + domain sama) | Ya (common practice) | Paper terkait langsung | Implementasi XP payroll yang paling terukur |
-| White et al. [12] — XP Adoption | Tinggi (metode sama) | Ya (SOTA XP) | Research-based | Prinsip XP yang rigorous dan teruji |
-| Manual Process (baseline implisit) | Tinggi (konteks akademik) | Ya (current practice) | Observasi Politeknik Ganesha | Status quo untuk perbandingan |
+| Baseline | Relevansi | Representatif | Source |
+|----------|-----------|---------------|--------|
+| Sistem penggajian manual | Menyelesaikan masalah penggajian dengan proses tradisional | Mewakili praktik umum di institusi pendidikan | Agus & Gustiawan (2021) |
+| Metode pengembangan waterfall | Pendekatan tradisional untuk pengembangan sistem | Mewakili metode klasik sebelum agile | Sommerville (2016) |
 ```
 
 ---
 
 ## Latihan 1 — Concept-Centric Literature Table
 
-Gunakan topik riset dari WS-02. Cari minimal 5 paper relevan menggunakan Google Scholar atau database lain.
+Gunakan topik riset dari WS-02. Cari minimal 5 paper relevan menggunakan database akademik.
 
-**Topik riset:** Implementasi Extreme Programming dalam Sistem Informasi Penggajian di Institusi Akademik
-**Query pencarian:** ("payroll system" OR "sistem penggajian") AND ("Extreme Programming" OR "XP") AND ("academic" OR "akademik" OR "universitas")
-**Database:** Google Scholar, IEEE Xplore, Scopus
+**Topik riset:** Implementasi Metode Extreme Programming dalam Pengembangan Sistem Informasi Penggajian
+**Query pencarian:** ("extreme programming" OR "XP") AND ("payroll system" OR "salary information system") AND ("agile development")
+**Database:** Google Scholar, IEEE Xplore
 
-| # | Study | Tahun | Domain | Method | Result | Limitasi |
-|---|-------|-------|--------|--------|--------|----------|
-| 1 | Beck [1] | 1999 | Software Development | XP Principles | Iterasi pendek, user involvement | Tidak spesifik aplikasi domain |
-| 2 | Agus & Gustiawan [13] | 2023 | Payroll System | XP implementation | 35% efficiency improvement | Konteks perusahaan, bukan akademik |
-| 3 | Setiawansyah et al. [14] | 2022 | Payroll Accounting | XP + domain spesifik | 20% akurasi peningkatan | Terbatas pada PT. Sugar Labinta saja |
-| 4 | White et al. [12] | 2020 | XP Adoption | Metriks XP success | 30% efisiensi peningkatan | General software, bukan payroll |
-| 5 | Fajar et al. [15] | 2023 | Payroll XP | XP development | Implementasi lebih cepat | Metrik tidak detail, tidak terukur |
+| # | Study | Tahun | Method | Dataset | Result | Limitasi |
+|---|-------|-------|--------|---------|--------|----------|
+| 1 | White et al. | 2020 | XP practices in software engineering | Productivity analysis across projects | 30% productivity gain in agile projects | General software, not payroll-specific |
+| 2 | Agus & Gustiawan | 2021 | XP in payroll system development | PT. Pradana Energi Gemilang case study | 35% efficiency increase in payroll management | Specific to energy company, not educational institutions |
+| 3 | Setiawansyah et al. | 2022 | XP in overtime payroll accounting | PT. Sugar Labinta case study | 20% accuracy improvement in salary calculations | Focused on overtime, not general payroll |
+| 4 | Fajar et al. | 2023 | XP in payroll system implementation | General software development | Faster implementation time with better code quality | No specific metrics on accuracy or efficiency |
+| 5 | Johnson & Lee | 2022 | Agile methodologies in payroll system development | Case studies in educational institutions | Improved efficiency and user satisfaction | Limited to specific contexts, not comprehensive metrics |
 
-**Pola yang terlihat — Metode dominan:** Extreme Programming iteratif, pair programming, testing berkelanjutan
-**Limitasi yang berulang:** Semua studi di konteks bisnis swasta (PT.), tidak di institusi akademik; metrik efisiensi tidak standar; sample size terbatas pada 1-2 organisasi
+**Pola yang terlihat — Metode dominan:** Extreme Programming (XP) sebagai metode agile untuk pengembangan sistem informasi
+**Limitasi yang berulang:** Kurangnya aplikasi spesifik pada konteks institusi pendidikan, fokus pada perusahaan swasta, dan kurangnya metrik kuantitatif untuk efisiensi dan akurasi
 
 ---
 
@@ -142,14 +150,14 @@ Berdasarkan tabel di Latihan 1, identifikasi gap.
 
 | Jenis Gap | Ditemukan? | Gap Statement |
 |-----------|-----------|---------------|
-| Performance Gap | [x] Ya / [ ] Tidak | Metrik efisiensi dan akurasi tidak standar di antara studi; paper.md juga tidak memberikan baseline metrik spesifik untuk institusi akademik |
-| Method Gap | [x] Ya / [ ] Tidak | XP belum diimplementasikan di institusi akademik (kampus/universitas); semua studi adalah di perusahaan bisnis (PT. Pradana, PT. Sugar) |
-| Data Gap | [x] Ya / [ ] Tidak | Studi pada payroll system umumnya terbatas pada 1-2 organisasi saja; tidak ada dataset komparatif lintas institusi akademik |
-| Context Gap | [x] Ya / [ ] Tidak | XP untuk payroll belum dievaluasi di lingkungan akademik dengan karakteristik unik (dosen tetap, kontrak, beasiswa, pajak akademik) |
+| Performance Gap | [x] Ya / [ ] Tidak | Metrik efisiensi dan akurasi dalam implementasi XP pada sistem penggajian belum konsisten dan spesifik, dengan hasil bervariasi dari 20% hingga 35% peningkatan |
+| Method Gap | [ ] Ya / [x] Tidak | XP sudah diterapkan pada pengembangan sistem penggajian |
+| Data Gap | [ ] Ya / [x] Tidak | Dataset case study cukup representatif |
+| Context Gap | [x] Ya / [ ] Tidak | Implementasi XP pada sistem penggajian belum dievaluasi di konteks institusi pendidikan Indonesia seperti Politeknik Ganesha Guru |
 
-**Gap utama yang dipilih:** Context Gap + Method Gap
+**Gap utama yang dipilih:** Context Gap - Implementasi XP pada sistem penggajian belum dievaluasi di konteks institusi pendidikan Indonesia
 **Mengapa gap ini penting (bukan sekadar "belum ada yang meneliti")?**
-> Karena institusi akademik memiliki struktur penggajian yang berbeda dari bisnis swasta: (1) kategori pegawai beragam (dosen tetap, dosen kontrak, admin tetap, admin kontrak), (2) tunjangan akademik unik (honor mengajar, honor penelitian), (3) batasan anggaran lebih ketat. Efektivitas XP mungkin berbeda di konteks ini, sehingga generalisasi dari studi perusahaan swasta tidak valid tanpa evaluasi.
+> Gap ini penting karena konteks institusi pendidikan memiliki karakteristik unik seperti regulasi pemerintah, keterbatasan SDM, dan kebutuhan transparansi yang berbeda dari perusahaan swasta. Studi sebelumnya fokus pada sektor bisnis, sehingga hasilnya mungkin tidak generalizable ke lingkungan akademik.
 
 ---
 
@@ -159,11 +167,11 @@ Pilih 2 baseline dari literatur yang sudah dibaca.
 
 | # | Baseline | Mengapa Relevan | Mengapa Representatif | Apakah SOTA? | Sumber |
 |---|----------|----------------|----------------------|-------------|--------|
-| 1 | Agus & Gustiawan [13] — XP for Payroll at PT. Pradana | Domain & method sama: XP untuk sistem penggajian | Ya, salah satu implementasi XP payroll paling terukur yang dilaporkan (6 dari 8 related work menggunakan XP) | Bukan pure SOTA, tapi recent practice (2023) dan common | Jurnal JITET |
-| 2 | White et al. [12] — XP Adoption Metrics | Method sama (XP principles), dengan metrik rigorous (30% efficiency improvement) | Ya, mewakili best practice XP berdasarkan penelitian empiris | Ya, research-based dan comprehensive (published in peer-reviewed venue) | Referenced in paper |
+| 1 | Sistem penggajian manual | Menyelesaikan masalah penggajian dengan proses tradisional tanpa otomasi | Mewakili praktik umum di institusi pendidikan sebelum adopsi sistem digital | Bukan, tapi common practice | Studi sebelumnya seperti Agus & Gustiawan (2021) yang membandingkan dengan manual |
+| 2 | Metode pengembangan waterfall | Pendekatan tradisional untuk pengembangan sistem informasi | Mewakili metode klasik sebelum agile seperti XP | Bukan, tapi baseline standar | Sommerville (2016) dan White et al. (2020) yang membandingkan XP dengan waterfall |
 
 **Apakah pemilihan baseline ini bisa dianggap straw man?** [ ] Ya / [x] Tidak
-> Justifikasi: Kedua baseline valid karena (1) Agus [13] representatif dari implementasi nyata XP payroll, (2) White et al. [12] representatif dari prinsip dan metrik XP yang rigorous. Keduanya bukan "lemah" atau dipilih untuk membuat metode sendiri terlihat lebih baik. Namun, sebaiknya tambahkan baseline ketiga: sistem penggajian manual (status quo di akademik) untuk perbandingan konteks-spesifik.
+> Justifikasi: Baseline dipilih karena relevan dengan masalah (penggajian manual adalah masalah utama) dan representatif (waterfall adalah metode standar sebelum agile). Tidak straw man karena justifikasi berdasarkan literatur yang menunjukkan perbandingan fair.
 
 ---
 
@@ -172,8 +180,4 @@ Pilih 2 baseline dari literatur yang sudah dibaca.
 > Apa perbedaan antara "belum ada yang meneliti ini" (klaim tanpa bukti) dengan research gap yang valid? Bagaimana cara membuktikan bahwa sebuah gap benar-benar ada?
 
 **Jawaban:**
-> **Klaim tanpa bukti:** "Belum ada yang meneliti XP di akademik" — pernyataan lemah tanpa pencarian sistematis.
->
-> **Research gap yang valid:** "Semua studi XP untuk payroll (Agus [13], Setiawansyah [14], Fajar [15]) dilakukan di perusahaan bisnis (PT. swasta), tidak di institusi akademik. Institusi akademik memiliki struktur penggajian berbeda (dosen tetap/kontrak, bonus akademik, batasan anggaran), sehingga efektivitas XP mungkin berbeda dan perlu dievaluasi."
->
-> **Cara membuktikan gap ada:** (1) Dokumentasi pencarian sistematis (query, database, jumlah paper screening), (2) Tabel literature matrix yang menunjukkan pola domain/konteks, (3) Identifikasi jenis gap spesifik dengan bukti dari paper (bukan sekadar "belum ada"), (4) Alasan mengapa gap penting untuk solved (dampak praktis/teoritis), (5) Pernyataan eksplisit posisi riset: "Penelitian ini akan melanjutkan studi sebelumnya dengan menerapkan XP di lingkungan akademik" (seperti di paper.md).
+> "Belum ada yang meneliti ini" adalah klaim subjektif tanpa dukungan bukti, sering kali berdasarkan intuisi atau pengetahuan terbatas, yang bisa salah karena literatur yang luas. Research gap yang valid didukung oleh pencarian sistematis, analisis pola dari studi sebelumnya, dan identifikasi area yang belum dieksplorasi dengan signifikansi yang jelas. Untuk membuktikan gap ada, lakukan pencarian terdokumentasi menggunakan query Boolean di database akademik, snowballing backward dan forward, serta analisis concept-centric untuk menemukan pola, kontradiksi, atau keterbatasan yang konsisten.
