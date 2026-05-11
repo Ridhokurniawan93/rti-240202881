@@ -67,25 +67,27 @@ Jika variabel tidak bisa di-map ke komponen apapun → arsitektur perlu didesain
 ```
 SYSTEM-EXPERIMENT MAPPING
 
-Research Question: ____________________
+Research Question: Apakah pengembangan sistem informasi penggajian di Politeknik Ganesha Guru menggunakan XP menghasilkan efisiensi waktu pemrosesan dan akurasi perhitungan yang lebih baik dibandingkan pengembangan tradisional/manual?
 
 Variable → Component Mapping:
 | Variabel | Tipe | Komponen Sistem | Cara Manipulasi/Pengukuran |
 |----------|------|-----------------|---------------------------|
-|          | IV   |                 |                           |
-|          | DV   |                 |                           |
-|          | CV   |                 |                           |
+| Metode pengembangan | IV | Process Framework Module | Config: development_method=XP atau traditional |
+| Waktu pemrosesan payroll | DV | Performance Logger Module | Otomatis capture start_time - end_time |
+| Akurasi perhitungan gaji | DV | Validation & Verification Module | Compare hasil vs referensi, hitung error rate |
+| Kepuasan pengguna | DV | Survey/Feedback Collector Module | Post-test Likert 1-5 survey |
+| Kompleksitas data payroll | CV | Data Configuration Module | Config: employee_count=50, salary_components=8 (tetap konstan) |
 
 4 Prinsip Desain:
-  [ ] Traceability — Setiap komponen bisa ditelusuri ke variabel
-  [ ] Variable Isolation — IV bisa diubah tanpa mengubah CV
-  [ ] Measurement Integration — Pengukuran DV built-in
-  [ ] Reproducibility — Setup bisa direkonstruksi
+  [x] Traceability — Setiap komponen bisa ditelusuri ke variabel
+  [x] Variable Isolation — IV bisa diubah tanpa mengubah CV
+  [x] Measurement Integration — Pengukuran DV built-in
+  [x] Reproducibility — Setup bisa direkonstruksi dari config file
 
 Experimental Setup:
-  Input data     : ____________________
-  Parameter      : ____________________
-  Output format  : ____________________
+  Input data     : Data pegawai, gaji, tunjangan, potongan dari Politeknik Ganesha Guru
+  Parameter      : development_method (XP/traditional), employee_count (50), iteration_period (1 bulan)
+  Output format  : JSON log: {timestamp, method, processing_time, error_count, validation_status, user_satisfaction_score}
 ```
 
 ---
@@ -94,16 +96,18 @@ Experimental Setup:
 
 Gunakan RQ dan variabel dari WS-05. Petakan ke komponen sistem.
 
-**RQ:** __________________________________________________
+**RQ:** Apakah pengembangan sistem informasi penggajian di Politeknik Ganesha Guru menggunakan XP menghasilkan efisiensi waktu pemrosesan dan akurasi perhitungan yang lebih baik dibandingkan pengembangan tradisional/manual?
 
 | Variabel | Tipe | Komponen Sistem | Cara Manipulasi / Pengukuran |
-|----------|------|-----------------|---------------------------|
-| *Contoh: Jenis model* | *IV* | *Modul classifier (swap RF ↔ CNN)* | *Ganti config `model_type`* |
-| | DV | | |
-| | CV | | |
+|----------|------|-----------------|----------------------------|
+| Metode pengembangan | IV | Process Framework Module | Config file: development_method=XP atau development_method=traditional |
+| Waktu pemrosesan payroll | DV | Performance Logger Module | Otomatis capture start_time dan end_time, hitung elapsed time per payroll cycle |
+| Akurasi perhitungan gaji | DV | Validation & Comparison Module | Bandingkan output sistem dengan perhitungan referensi, hitung persentase error |
+| Kepuasan pengguna | DV | Survey Collector Module | Form Likert 1-5 untuk admin dan stakeholder setelah penggunaan sistem |
+| Kompleksitas data payroll | CV | Data Configuration Module | Config: employee_count=50, salary_components=8, deduction_types=5 (tetap konstan) |
 
-**Apakah semua variabel bisa di-map?** [ ] Ya / [ ] Tidak
-> Jika tidak, komponen apa yang perlu ditambahkan? _________
+**Apakah semua variabel bisa di-map?** [x] Ya / [ ] Tidak
+> Jika tidak, komponen apa yang perlu ditambahkan? —
 
 ---
 
@@ -113,31 +117,32 @@ Evaluasi desain sistem terhadap 4 prinsip.
 
 | Prinsip | Status | Bukti / Penjelasan |
 |---------|--------|-------------------|
-| Traceability | *Contoh: ✅ — setiap modul punya label variabel* | |
-| Modularity | | |
-| Controllability | | |
-| Measurability | | |
+| Traceability | ✅ | Setiap modul (Process Framework, Performance Logger, Validation, Survey Collector) dapat ditelusuri ke satu atau lebih variabel RQ. |
+| Modularity | ✅ | Process Framework Module dapat di-toggle antara XP dan tradisional tanpa mengubah modul pengukuran (Performance Logger, Validation, Survey Collector). |
+| Controllability | ✅ | Kompleksitas data (CV) dikontrol melalui config file yang tetap selama eksperimen, mencegah noise eksternal. |
+| Measurability | ✅ | Sistem otomatis menghasilkan output dalam format terstruktur (JSON log) untuk DV: waktu pemrosesan, akurasi, kepuasan pengguna. |
 
-**Prinsip mana yang paling sulit dipenuhi?** _______________
+**Prinsip mana yang paling sulit dipenuhi?** Controllability
 **Strategi untuk mengatasinya:**
-> ___________________________________________________
+> Menggunakan konfigurasi file yang explicit (YAML/JSON) untuk semua parameter data (jumlah pegawai, komponen gaji, potongan pajak). Sebelum eksperimen dimulai, lock config file agar tidak berubah. Dokumentasikan versi config yang digunakan untuk setiap trial eksperimen agar reproducible.
 
 ---
 
 ## Latihan 3 — Ablation Study Planning
 
-Jika sistem memiliki 3 komponen utama, rencanakan ablation study.
+Jika sistem memiliki komponen utama untuk XP dan untuk tradisional, rencanakan ablation study.
 
-| Kondisi | Komponen A | Komponen B | Komponen C | Hasil yang Diharapkan |
-|---------|-----------|-----------|-----------|----------------------|
-| Full | *Contoh: ✅ CNN* | *Contoh: ✅ Temporal features* | *Contoh: ✅ Z-score norm* | *Baseline penuh* |
-| – A | ❌ (ganti RF) | ✅ | ✅ | |
-| – B | ✅ | ❌ (tanpa temporal) | ✅ | |
-| – C | ✅ | ✅ | ❌ (tanpa normalisasi) | |
+| Kondisi | Metode | Performance Logger | Validation Module | Survey Collector | Hasil yang Diharapkan |
+|---------|--------|------|------|---------|---------------------|
+| Full (XP) | ✅ XP | ✅ On | ✅ On | ✅ On | Baseline XP: waktu pemrosesan min, akurasi max, kepuasan user tinggi |
+| Full (Tradisional) | ✅ Traditional | ✅ On | ✅ On | ✅ On | Baseline tradisional: waktu pemrosesan lebih lama, akurasi lebih rendah |
+| – Performance Logger | ✅ XP | ❌ Off | ✅ On | ✅ On | Tidak bisa mengukur waktu pemrosesan (data waktu hilang) |
+| – Validation Module | ✅ XP | ✅ On | ❌ Off | ✅ On | Tidak bisa mengukur akurasi perhitungan (error rate unknown) |
+| – Survey Collector | ✅ XP | ✅ On | ✅ On | ❌ Off | Tidak bisa mengukur kepuasan pengguna (feedback missing) |
 
-**Komponen mana yang diprediksi paling berkontribusi?** _____
+**Komponen mana yang diprediksi paling berkontribusi?** Performance Logger (modul pengukuran waktu pemrosesan)
 **Mengapa?**
-> ___________________________________________________
+> Waktu pemrosesan adalah salah satu DV utama dalam hipotesis dan metrik terkunci untuk membuktikan efisiensi XP. Tanpa Performance Logger, tidak bisa mengumpulkan data utama untuk menerima atau menolak H₁. Selain itu, waktu pemrosesan adalah indikator langsung dari metodologi pengembangan (XP dengan iterasi pendek vs tradisional dengan fase panjang).
 
 ---
 
@@ -146,5 +151,4 @@ Jika sistem memiliki 3 komponen utama, rencanakan ablation study.
 > Apa risiko jika sistem dibangun seperti produk (monolitik, fitur lengkap) lalu baru dilakukan eksperimen? Mengapa arsitektur modular penting untuk riset?
 
 **Jawaban:**
-> ___________________________________________________
-> ___________________________________________________
+> Risiko monolitik: sulit mengisolasi variabel karena semua komponen terikat erat. Jika ingin membandingkan XP vs tradisional, tidak bisa swap metode tanpa rebuild seluruh sistem. Hasilnya tidak bisa direproduksi, dan sulit tahu kontribusi setiap komponen. Arsitektur modular penting karena memungkinkan toggle variabel independen (feature flags, config-driven execution) sehingga hanya variabel eksperimen yang berubah, CV terkontrol, dan DV dapat diukur dengan bersih. Dengan modular design, eksperimen menjadi reproducible dan causal inferences lebih kuat karena isolasi variabel terjaga.
