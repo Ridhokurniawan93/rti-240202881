@@ -66,19 +66,21 @@ Metrik harus ditentukan **sebelum** eksperimen. Memilih metrik setelah melihat d
 ```
 VARIABLE & METRIC DEFINITION
 
-Research Question: ____________________
+Research Question: Apakah pengembangan sistem informasi penggajian di Politeknik Ganesha Guru menggunakan Extreme Programming (XP) menghasilkan efisiensi waktu pemrosesan dan akurasi perhitungan yang lebih baik dibandingkan dengan pengembangan tradisional dan proses manual?
 
 | Variabel | Tipe | Konsep | Metrik | Skala | Satuan | Cara Mengukur | Justifikasi |
 |----------|------|--------|--------|-------|--------|---------------|-------------|
-|          | IV   |        |        |       |        |               |             |
-|          | DV   |        |        |       |        |               |             |
-|          | CV   |        |        |       |        |               |             |
+| Metode pengembangan sistem | IV | Pendekatan desain dan pengelolaan pengembangan perangkat lunak | Kategori: XP vs tradisional/manual | Nominal | — | Klasifikasi metode berdasarkan dokumentasi proses pengembangan | Memilih metode sebagai variabel independen memungkinkan perbandingan pengaruh desain pengembangan terhadap outcome sistem.
+| Efisiensi pemrosesan payroll | DV | Kecepatan sistem dan proses penggajian | Rata-rata waktu pemrosesan payroll per periode | Ratio | Menit | Ukur waktu mulai hingga selesai pemrosesan payroll pada sistem yang diuji | Waktu merupakan indikator langsung efisiensi dan memiliki nol absolut, cocok sebagai metrik utama untuk hypothesis.
+| Akurasi perhitungan gaji | DV | Ketepatan hasil output sistem penggajian | Persentase kesalahan perhitungan gaji terhadap total transaksi | Ratio | Persen (%) | Bandingkan jumlah kesalahan gaji dengan total transaksi payroll dalam periode pengujian | Mengukur seberapa akurat sistem menghitung gaji, langsung terkait dengan tujuan utama sistem penggajian.
+| Kepuasan pengguna | DV | Persepsi pengguna terhadap kualitas sistem | Skor rata-rata kepuasan pengguna menggunakan survei Likert 1-5 | Ordinal | Skor | Survei pengguna sistem (admin dan pemangku kepentingan) setelah penggunaan sistem | Menangkap aspek subjektif kualitas sistem yang tidak tercermin oleh metrik teknis saja.
+| Kompleksitas data payroll | CV | Kondisi input data yang mempengaruhi pengujian | Jumlah pegawai dan variasi komponen gaji | Ratio / Nominal | jumlah / jenis | Hitung jumlah pegawai yang diproses dan kategori komponen gaji yang digunakan | Kontrol terhadap variasi data untuk memastikan perbandingan kausal antara metode pengembangan.
 
 Alignment Check:
   RQ → Concept → Variable → Metric → Data → Result
-  [ ] Setiap langkah terdokumentasi
-  [ ] Tidak ada "lompatan logis"
-  [ ] Metrik mengukur apa yang dimaksud (construct validity)
+  [x] Setiap langkah terdokumentasi
+  [x] Tidak ada "lompatan logis"
+  [x] Metrik mengukur apa yang dimaksud (construct validity)
 ```
 
 ---
@@ -87,16 +89,18 @@ Alignment Check:
 
 Gunakan RQ dari WS-04. Definisikan variabel dan metriknya.
 
-**RQ:** __________________________________________________
+**RQ:** Apakah pengembangan sistem informasi penggajian di Politeknik Ganesha Guru menggunakan Extreme Programming (XP) menghasilkan efisiensi waktu pemrosesan dan akurasi perhitungan yang lebih baik dibandingkan pengembangan tradisional/manual?
 
 | Variabel | Tipe | Konsep Abstrak | Metrik Konkret | Skala (NOIR) | Satuan |
 |----------|------|---------------|----------------|-------------|--------|
-| *Contoh: Jenis model* | *IV* | *Pendekatan klasifikasi* | *Categorical: CNN vs RF* | *Nominal* | *—* |
-| | DV | | | | |
-| | CV | | | | |
+| Metode pengembangan | IV | Pendekatan desain sistem penggajian | XP vs tradisional/manual | Nominal | — |
+| Waktu pemrosesan payroll | DV | Efisiensi proses penggajian | Rata-rata waktu pemrosesan per periode | Ratio | Menit |
+| Kesalahan perhitungan gaji | DV | Akurasi output sistem | Persentase kesalahan perhitungan | Ratio | Persen |
+| Kepuasan pengguna | DV | Persepsi kualitas sistem | Skor rata-rata Likert 1-5 | Ordinal | Skor |
+| Kompleksitas data payroll | CV | Kondisi input data dan variasi kasus | Jumlah pegawai dan variasi komponen gaji | Ratio | jumlah/jenis |
 
-**Apakah ada lompatan logis dalam rantai?** [ ] Ya / [ ] Tidak
-> Jika ya, di mana? ____________________________________
+**Apakah ada lompatan logis dalam rantai?** [ ] Ya / [x] Tidak
+> Jika ya, di mana? —
 
 ---
 
@@ -106,15 +110,15 @@ Evaluasi metrik DV yang dipilih di Latihan 1 menggunakan 3 kriteria.
 
 | Kriteria | Skor (1-5) | Justifikasi |
 |----------|-----------|-------------|
-| Representative | *Contoh: 4 — F1-Score mewakili keseimbangan precision-recall* | |
-| Sensitive | | |
-| Feasible | | |
+| Representative | 5 | Waktu pemrosesan dan persentase kesalahan langsung mencerminkan efisiensi dan akurasi sistem penggajian. |
+| Sensitive | 4 | Metrik ratio seperti waktu dan kesalahan peka terhadap perubahan performa, tetapi perlu standar pengukuran konsisten. |
+| Feasible | 5 | Data waktu dan kesalahan dapat dikumpulkan dari log sistem dan uji penghitungan dengan mudah. |
 
-**Apakah perlu secondary metric?** [ ] Ya / [ ] Tidak
-> Jika ya, apa dan mengapa? _____________________________
+**Apakah perlu secondary metric?** [x] Ya / [ ] Tidak
+> Jika ya, apa dan mengapa? Kepuasan pengguna sebagai secondary metric mendukung hasil teknis dengan perspektif pengalaman pengguna, terutama karena sistem penggajian harus diterima oleh admin dan pemangku kepentingan.
 
 **Contoh kasus ceiling effect untuk metrik ini:**
-> ___________________________________________________
+> Jika skor kepuasan pengguna rata-rata sudah sangat tinggi (misalnya 4.8-5.0), perbedaan antara metode menjadi sulit dideteksi karena skala Likert terbatas.
 
 ---
 
@@ -124,10 +128,10 @@ Bayangkan data yang akan dikumpulkan dari eksperimen. Evaluasi 4 dimensi kualita
 
 | Dimensi | Pertanyaan | Jawaban | Strategi Mitigasi |
 |---------|-----------|---------|------------------|
-| Completeness | *Apakah semua data point terkumpul?* | | |
-| Consistency | *Apakah ada kontradiksi internal?* | | |
-| Validity | *Apakah benar-benar mengukur yang dimaksud?* | | |
-| Representativeness | *Apakah sampel mewakili populasi target?* | | |
+| Completeness | Apakah semua data point terkumpul? | Data harus mencakup semua eksekusi payroll dalam periode pengujian dan semua respon survei pengguna. | Gunakan checklist log pengujian dan reminder survei untuk memastikan tidak ada data yang hilang. |
+| Consistency | Apakah ada kontradiksi internal? | Periksa apakah total waktu pemrosesan selaras dengan jumlah transaksi dan apakah persentase kesalahan dihitung dengan rumus yang konsisten. | Standarisasi format pelaporan dan verifikasi ganda antara log sistem dan hasil perhitungan manual. |
+| Validity | Apakah benar-benar mengukur yang dimaksud? | Waktu pemrosesan mengukur efisiensi, kesalahan gaji mengukur akurasi, dan kepuasan mengukur pengalaman pengguna. | Gunakan definisi metrik yang jelas dan validasi dengan stakeholder bahwa metrik merepresentasikan konsep yang dimaksud. |
+| Representativeness | Apakah sampel mewakili populasi target? | Sampel harus mencakup variasi pegawai dan tipe gaji di Politeknik Ganesha Guru, bukan hanya skenario sederhana. | Pilih unit pengujian dengan jumlah pegawai dan kondisi tunjangan yang mencerminkan keseluruhan populasi institusi. |
 
 ---
 
@@ -136,5 +140,4 @@ Bayangkan data yang akan dikumpulkan dari eksperimen. Evaluasi 4 dimensi kualita
 > Mengapa memilih metrik setelah melihat data dianggap p-hacking? Apa bedanya dengan eksplorasi data yang sah?
 
 **Jawaban:**
-> ___________________________________________________
-> ___________________________________________________
+> Memilih metrik setelah melihat data dianggap p-hacking karena keputusan tersebut dapat diarahkan untuk mendapatkan hasil signifikan secara statistik, bukan berdasarkan konstruk penelitian yang konsisten. Eksplorasi data yang sah tetap memisahkan metrik yang telah ditentukan sebelumnya (confirmatory) dari temuan tambahan yang dilaporkan sebagai exploratory, sehingga transparansi dan validitas penelitian terjaga.
