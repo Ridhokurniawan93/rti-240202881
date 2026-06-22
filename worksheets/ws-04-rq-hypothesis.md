@@ -12,8 +12,8 @@ Research Question yang baik secara implisit mengandung cetak biru eksperimen: su
 
 | Kualitas | Contoh |
 |----------|--------|
-| **Buruk** | "Bagaimana pengaruh deep learning terhadap deteksi malware?" |
-| **Baik** | "Apakah CNN menghasilkan F1-Score lebih tinggi dari RF pada CIC-MalMem-2022?" |
+| **Buruk** | "Bagaimana pengaruh indexing terhadap performa database?" |
+| **Baik** | "Apakah composite indexing menghasilkan response time SELECT yang lebih rendah dibandingkan no-index pada PostgreSQL dan MySQL dengan dataset 100.000-1.000.000 record?" |
 
 Perbedaan: RQ yang baik menyebutkan **metode spesifik**, **metrik terukur**, **baseline**, dan **dataset**.
 
@@ -67,16 +67,35 @@ Jika rantai ini tidak lengkap, RQ belum mature. Bi-directional: RQ yang tidak bi
 ```
 RQ-CONTRIBUTION-HYPOTHESIS
 
-Gap Statement  : Implementasi XP pada sistem informasi penggajian belum dievaluasi di konteks institusi pendidikan Indonesia, khususnya Politeknik Ganesha Guru.
+Gap Statement  : Studi sebelumnya tidak mengontrol strategi indexing dan query optimization sebagai variabel independen, menyebabkan inkonsistensi hasil perbandingan performa MySQL vs PostgreSQL (Method Gap + Performance Gap).
 
 Research Question:
-  Tipe         : [x] Comparison  [ ] Improvement  [ ] Exploratory
-  Formulasi    : Apakah pengembangan sistem informasi penggajian di Politeknik Ganesha Guru menggunakan Extreme Programming (XP) menghasilkan efisiensi waktu pemrosesan dan akurasi perhitungan yang lebih baik dibandingkan dengan pengembangan tradisional serta proses manual?
-  Variabel IV  : Metode pengembangan sistem (XP vs tradisional/manual)
-  Variabel DV  : Efisiensi waktu pemrosesan, akurasi perhitungan, kepuasan pengguna
-  Metrik       : Waktu pemrosesan payroll (menit), persentase kesalahan perhitungan gaji (%), skor kepuasan pengguna (1-5)
-  Dataset      : Data pegawai dan data gaji di Politeknik Ganesha Guru serta hasil pengujian sistem penggajian yang dibangun
-  Baseline     : Proses manual / pengembangan sistem tradisional sebelum adopsi XP
+  RQ1:
+    Tipe         : [x] Comparison  [ ] Improvement  [ ] Exploratory
+    Formulasi    : Apakah terdapat perbedaan signifikan dalam response time (ms) antara PostgreSQL dan MySQL pada workload CRUD (SELECT, INSERT, UPDATE, DELETE) dengan variasi volume data (50.000, 100.000, 250.000, 500.000, 1.000.000 record)?
+    Variabel IV  : Jenis DBMS (PostgreSQL vs MySQL)
+    Variabel DV  : Response time (ms)
+    Metrik       : Response time per query dalam milidetik
+    Dataset      : Dataset terstandarisasi dengan volume 50.000 hingga 1.000.000 record
+    Baseline     : Konfigurasi default tanpa indexing (no-index)
+
+  RQ2:
+    Tipe         : [ ] Comparison  [ ] Improvement  [x] Exploratory
+    Formulasi    : Bagaimana dampak indexing strategy (no-index, single-column index, composite index) terhadap response time PostgreSQL dan MySQL pada workload CRUD?
+    Variabel IV  : Indexing strategy (no-index, single-column, composite)
+    Variabel DV  : Response time (ms), throughput (QPS)
+    Metrik       : Response time per query (ms), queries per second
+    Dataset      : Dataset terstandarisasi (sama dengan RQ1)
+    Baseline     : No-index condition
+
+  RQ3:
+    Tipe         : [ ] Comparison  [ ] Improvement  [x] Exploratory
+    Formulasi    : Apakah terdapat interaksi signifikan antara jenis DBMS, indexing strategy, dan query optimization terhadap response time pada workload CRUD?
+    Variabel IV  : DBMS × Indexing × Query Optimization (faktor interaksi)
+    Variabel DV  : Response time (ms)
+    Metrik       : Response time per query (ms)
+    Dataset      : Dataset terstandarisasi (sama dengan RQ1)
+    Baseline     : Default query tanpa optimization, no-index
 
 Quality Check RQ:
   [x] Variabel spesifik
@@ -86,15 +105,22 @@ Quality Check RQ:
   [x] Memerlukan eksperimen (bukan hanya survei literatur)
 
 Contribution Statement:
-  Apa yang baru diketahui : Efektivitas XP dalam meningkatkan efisiensi dan akurasi sistem penggajian dalam konteks institusi pendidikan Indonesia.
+  Apa yang baru diketahui : Bukti empiris tentang dampak indexing strategy dan query optimization terhadap performa PostgreSQL dan MySQL pada workload CRUD, serta interaksi antar faktor tersebut.
   Jenis kontribusi        : [ ] Improvement  [x] Comparison  [ ] Novel approach
-  Gap yang diisi          : Context gap dari WS-03 tentang ketidaktersediaan evaluasi XP pada sistem penggajian di lingkungan akademik.
+  Gap yang diisi          : Method Gap (kontrol indexing dan optimization) dan Performance Gap (inkonsistensi hasil studi sebelumnya).
 
 Hypothesis Pair:
-  H₀ : Tidak ada perbedaan signifikan dalam efisiensi waktu pemrosesan, akurasi perhitungan, atau kepuasan pengguna antara sistem penggajian yang dikembangkan dengan XP dan sistem penggajian tradisional/manual di Politeknik Ganesha Guru.
-  H₁ : Sistem penggajian yang dikembangkan dengan XP memiliki efisiensi waktu pemrosesan lebih baik, akurasi perhitungan lebih tinggi, dan kepuasan pengguna lebih tinggi dibandingkan metode tradisional/manual.
-  Threshold              : p < 0.05 dan minimal 10% peningkatan efektivitas pada metrik utama.
-  Justifikasi threshold  : Standar statistik umum menggunakan p < 0.05, dan 10% peningkatan dianggap bernilai operasional dalam konteks pengelolaan gaji.
+  H₀₁ : Tidak ada perbedaan signifikan dalam response time antara PostgreSQL dan MySQL pada workload CRUD.
+  H₁₁ : Terdapat perbedaan signifikan dalam response time antara PostgreSQL dan MySQL pada minimal satu jenis operasi CRUD.
+
+  H₀₂ : Indexing strategy (no-index, single-column, composite) tidak berdampak signifikan terhadap response time PostgreSQL dan MySQL.
+  H₁₂ : Minimal satu indexing strategy menghasilkan response time yang signifikan lebih rendah dibandingkan no-index pada salah satu DBMS.
+
+  H₀₃ : Tidak ada interaksi signifikan antara jenis DBMS, indexing strategy, dan query optimization terhadap response time.
+  H₁₃ : Terdapat interaksi signifikan antara jenis DBMS, indexing strategy, dan query optimization terhadap response time.
+
+  Threshold              : p < 0.05
+  Justifikasi threshold  : Standar statistik umum dalam penelitian eksperimen; alpha 0.05 memberikan keseimbangan antara Type I dan Type II error.
 ```
 
 ---
@@ -103,24 +129,26 @@ Hypothesis Pair:
 
 Gunakan gap yang ditemukan di WS-03. Transformasikan menjadi Research Question.
 
-**Gap dari WS-03:** Implementasi XP pada sistem penggajian belum dievaluasi di konteks institusi pendidikan Indonesia seperti Politeknik Ganesha Guru.
+**Gap dari WS-03:** Method Gap (tidak ada kontrol indexing/optimization) dan Performance Gap (inkonsistensi hasil studi).
 
 **RQ versi pertama (tulis bebas):**
-> Apakah penggunaan Extreme Programming (XP) untuk mengembangkan sistem informasi penggajian dapat meningkatkan efisiensi dan akurasi di Politeknik Ganesha Guru?
+> Apakah indexing dan query optimization memengaruhi performa MySQL dan PostgreSQL pada operasi CRUD?
 
 **Evaluasi RQ:**
 
 | Komponen | Ada? | Isi |
 |----------|------|-----|
-| Metode spesifik | Ya | XP vs tradisional/manual |
-| Metrik terukur | Ya | Waktu pemrosesan, akurasi perhitungan, kepuasan pengguna |
-| Baseline | Ya | Sistem manual dan metode tradisional pengembangan |
-| Dataset/konteks | Ya | Sistem penggajian Politeknik Ganesha Guru |
+| Metode spesifik | Ya | PostgreSQL vs MySQL dengan variasi indexing dan optimization |
+| Metrik terukur | Ya | Response time (ms), throughput (QPS) |
+| Baseline | Ya | No-index condition, default query |
+| Dataset/konteks | Ya | Dataset terstandarisasi, 50.000-1.000.000 record, workload CRUD |
 
-**Tipe RQ:** [x] Comparison / [ ] Improvement / [ ] Exploratory
+**Tipe RQ:** [ ] Comparison / [ ] Improvement / [x] Exploratory (multi-factor)
 
 **RQ versi revisi (setelah evaluasi):**
-> Apakah pengembangan sistem informasi penggajian di Politeknik Ganesha Guru menggunakan Extreme Programming (XP) menghasilkan efisiensi waktu pemrosesan dan akurasi perhitungan yang lebih baik dibandingkan dengan pengembangan tradisional dan proses manual?
+> (RQ1) Apakah terdapat perbedaan signifikan dalam response time antara PostgreSQL dan MySQL pada workload CRUD dengan variasi volume data?
+> (RQ2) Bagaimana dampak indexing strategy (no-index, single-column, composite) terhadap response time PostgreSQL dan MySQL?
+> (RQ3) Apakah terdapat interaksi signifikan antara DBMS, indexing strategy, dan query optimization terhadap response time pada workload CRUD?
 
 ---
 
@@ -130,14 +158,18 @@ Rumuskan pasangan hipotesis dari RQ di Latihan 1.
 
 | Komponen | Isi |
 |----------|-----|
-| H₀ | Tidak ada perbedaan signifikan dalam efisiensi waktu pemrosesan, akurasi perhitungan, atau kepuasan pengguna antara sistem penggajian XP dan sistem penggajian tradisional/manual di Politeknik Ganesha Guru. |
-| H₁ | Sistem penggajian yang dikembangkan dengan XP memiliki efisiensi waktu pemrosesan lebih baik, akurasi perhitungan lebih tinggi, dan kepuasan pengguna lebih tinggi dibandingkan metode tradisional/manual. |
-| Metrik | Waktu pemrosesan payroll (menit), persentase kesalahan perhitungan gaji (%), skor kepuasan pengguna (1-5). |
-| Threshold | p < 0.05 dan minimal 10% peningkatan efektivitas pada metrik utama. |
-| Justifikasi threshold | p < 0.05 merupakan standar statistik umum; 10% peningkatan dianggap signifikan secara operasional untuk sistem penggajian. |
+| H₀₁ | Tidak ada perbedaan signifikan dalam response time antara PostgreSQL dan MySQL pada workload CRUD. |
+| H₁₁ | Terdapat perbedaan signifikan dalam response time antara PostgreSQL dan MySQL pada minimal satu jenis operasi CRUD. |
+| H₀₂ | Indexing strategy tidak berdampak signifikan terhadap response time pada kedua DBMS. |
+| H₁₂ | Minimal satu indexing strategy menghasilkan response time signifikan lebih rendah dibandingkan no-index. |
+| H₀₃ | Tidak ada interaksi signifikan antara DBMS, indexing strategy, dan query optimization terhadap response time. |
+| H₁₃ | Terdapat interaksi signifikan antara DBMS, indexing strategy, dan query optimization terhadap response time. |
+| Metrik | Response time (ms), throughput (QPS) |
+| Threshold | p < 0.05 |
+| Justifikasi threshold | Standar alpha 0.05 dalam penelitian eksperimen, memberikan keseimbangan antara risiko Type I error (false positive) dan Type II error (false negative). |
 
 **Apakah hipotesis ini falsifiable?** [x] Ya / [ ] Tidak
-> Bagaimana cara membuktikannya salah? Dengan mengumpulkan data pengujian dan menunjukkan bahwa perbedaan antara XP dan tradisional/manual tidak signifikan secara statistik (p ≥ 0.05) atau tidak mencapai peningkatan 10%.
+> Bagaimana cara membuktikannya salah? Dengan mengumpulkan data eksperimen dan menunjukkan bahwa perbedaan response time antar kondisi tidak signifikan secara statistik (p ≥ 0.05). Jika indexing tidak memberikan dampak signifikan, H₀₂ tidak ditolak — ini tetap menjadi kontribusi ilmiah (negative result).
 
 ---
 
@@ -147,15 +179,15 @@ Lengkapi rantai dari RQ hingga metode analisis.
 
 | Tahap | Isi |
 |-------|-----|
-| RQ | Apakah pengembangan sistem informasi penggajian di Politeknik Ganesha Guru menggunakan XP menghasilkan efisiensi waktu pemrosesan dan akurasi perhitungan yang lebih baik dibandingkan pengembangan tradisional/manual? |
-| Variable (IV) | Metode pengembangan sistem (XP vs tradisional/manual) |
-| Variable (DV) | Efisiensi waktu pemrosesan, akurasi perhitungan, kepuasan pengguna |
-| Metric | Waktu pemrosesan (menit), persentase kesalahan gaji (%), skor kepuasan pengguna (1-5) |
-| Data source | Data penggajian Politeknik Ganesha Guru, hasil pengujian sistem baru, survei pengguna sistem |
-| Analysis method | Perbandingan kuantitatif dengan uji statistik (misalnya t-test atau uji non-parametrik) dan analisis deskriptif |
+| RQ | RQ1: Perbedaan response time PostgreSQL vs MySQL pada CRUD? RQ2: Dampak indexing strategy? RQ3: Interaksi DBMS × indexing × optimization? |
+| Variable (IV) | DBMS (PostgreSQL/MySQL), Indexing strategy (none/single/composite), Query optimization (default/optimized), Volume data (50K-1M) |
+| Variable (DV) | Response time (ms), Throughput (QPS) |
+| Metric | Response time per query dalam milidetik; Throughput dalam queries per second |
+| Data source | Eksperimen benchmarking dengan script otomatis pada hardware terkontrol |
+| Analysis method | Two-way/three-way ANOVA (atau Kruskal-Wallis jika asumsi tidak terpenuhi) untuk menguji efek utama dan interaksi; post-hoc test (Tukey HSD) untuk pairwise comparison |
 
 **Apakah rantai lengkap?** [x] Ya / [ ] Tidak
-> Jika tidak, tahap mana yang perlu direvisi? -
+> Jika tidak, tahap mana yang perlu direvisi? —
 
 ---
 
@@ -163,6 +195,6 @@ Lengkapi rantai dari RQ hingga metode analisis.
 
 > Ambil satu judul skripsi/paper yang pernah dibaca. Coba ekstrak RQ-nya. Apakah RQ tersebut memenuhi semua komponen (metode, metrik, baseline, konteks)? Jika tidak, apa yang hilang?
 
-**Judul:** Implementasi Extreme Programming pada Sistem Informasi Penggajian.
-**RQ yang diekstrak:** Apakah penggunaan XP dalam pengembangan sistem penggajian meningkatkan efisiensi dan akurasi dibanding metode tradisional? 
-**Komponen yang hilang:** Jika belum eksplisit, dataset/konteks institusi pendidikan atau baseline tradisional/manual dapat ditambahkan agar lebih lengkap.
+**Judul:** Analisis Perbandingan Performa Antara MySQL dan PostgreSQL (Ahsa et al., 2023)
+**RQ yang diekstrak:** Bagaimana perbandingan response time MySQL dan PostgreSQL pada query SELECT, INSERT, UPDATE, dan DELETE dengan variasi jumlah record?
+**Komponen yang hilang:** Baseline tidak eksplisit (konfigurasi default tanpa justifikasi); tidak ada kontrol indexing strategy sebagai variabel; tidak ada hipotesis formal yang dirumuskan sebelum eksperimen. Penambahan kontrol indexing dan optimization sebagai variabel akan membuat RQ lebih rigor dan hasilnya lebih informatif.

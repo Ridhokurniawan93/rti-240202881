@@ -22,9 +22,9 @@ Setiap komponen sistem harus bisa ditelusuri ke variabel riset (top-down), dan s
 
 | Tipe Variabel | Peran di Sistem | Contoh |
 |---------------|----------------|--------|
-| **IV** (Independent) | Modul yang bisa di-toggle/swap | Algoritma A vs B |
-| **DV** (Dependent) | Modul pengukuran | Logger, metrics collector |
-| **CV** (Control) | Config yang dikunci | Dataset, parameter tetap |
+| **IV** (Independent) | Modul yang bisa di-toggle/swap | DBMS (PostgreSQL vs MySQL), Indexing (none/single/composite) |
+| **DV** (Dependent) | Modul pengukuran | Response time logger, throughput calculator |
+| **CV** (Control) | Config yang dikunci | Volume data, skema database, hardware spec |
 
 Jika variabel tidak bisa di-map ke komponen apapun → arsitektur perlu didesain ulang.
 
@@ -67,27 +67,32 @@ Jika variabel tidak bisa di-map ke komponen apapun → arsitektur perlu didesain
 ```
 SYSTEM-EXPERIMENT MAPPING
 
-Research Question: Apakah pengembangan sistem informasi penggajian di Politeknik Ganesha Guru menggunakan XP menghasilkan efisiensi waktu pemrosesan dan akurasi perhitungan yang lebih baik dibandingkan pengembangan tradisional/manual?
+Research Question:
+  RQ1: Perbedaan response time PostgreSQL vs MySQL pada CRUD?
+  RQ2: Dampak indexing strategy terhadap response time?
+  RQ3: Interaksi DBMS × indexing × optimization terhadap response time?
 
 Variable → Component Mapping:
 | Variabel | Tipe | Komponen Sistem | Cara Manipulasi/Pengukuran |
 |----------|------|-----------------|---------------------------|
-| Metode pengembangan | IV | Process Framework Module | Config: development_method=XP atau traditional |
-| Waktu pemrosesan payroll | DV | Performance Logger Module | Otomatis capture start_time - end_time |
-| Akurasi perhitungan gaji | DV | Validation & Verification Module | Compare hasil vs referensi, hitung error rate |
-| Kepuasan pengguna | DV | Survey/Feedback Collector Module | Post-test Likert 1-5 survey |
-| Kompleksitas data payroll | CV | Data Configuration Module | Config: employee_count=50, salary_components=8 (tetap konstan) |
+| Jenis DBMS | IV | DBMS Connection Module | Config: dbms=postgresql atau dbms=mysql |
+| Indexing Strategy | IV | Index Manager Module | Config: index_type=none/single/composite; CREATE INDEX / DROP INDEX script |
+| Query Optimization | IV | Query Template Module | Config: query_version=default/optimized; separate SQL template files |
+| Volume Data | CV | Data Generator Module | Config: record_count=50000/100000/250000/500000/1000000 (tetap per trial) |
+| Response Time | DV | Benchmark Logger Module | Otomatis capture start_time - end_time per query (ms precision) |
+| Throughput | DV | Throughput Calculator Module | Hitung QPS dari batch execution: total_queries / elapsed_time |
+| Jenis Operasi CRUD | CV | Query Executor Module | Config: operation=SELECT/INSERT/UPDATE/DELETE (tetap per trial) |
 
 4 Prinsip Desain:
-  [x] Traceability — Setiap komponen bisa ditelusuri ke variabel
-  [x] Variable Isolation — IV bisa diubah tanpa mengubah CV
-  [x] Measurement Integration — Pengukuran DV built-in
-  [x] Reproducibility — Setup bisa direkonstruksi dari config file
+  [x] Traceability — Setiap komponen bisa ditelusuri ke variabel riset
+  [x] Variable Isolation — IV (DBMS, indexing, optimization) bisa diubah tanpa mengubah CV (volume, skema, hardware)
+  [x] Measurement Integration — Benchmark Logger dan Throughput Calculator built-in
+  [x] Reproducibility — Setup bisa direkonstruksi dari config file (YAML)
 
 Experimental Setup:
-  Input data     : Data pegawai, gaji, tunjangan, potongan dari Politeknik Ganesha Guru
-  Parameter      : development_method (XP/traditional), employee_count (50), iteration_period (1 bulan)
-  Output format  : JSON log: {timestamp, method, processing_time, error_count, validation_status, user_satisfaction_score}
+  Input data     : Dataset terstandarisasi (Google Playstore-like schema: 19 kolom, berbagai tipe data)
+  Parameter      : dbms (postgresql/mysql), index_type (none/single/composite), query_version (default/optimized), record_count (50K-1M), operation (SELECT/INSERT/UPDATE/DELETE)
+  Output format  : JSON log: {timestamp, dbms, index_type, query_version, operation, record_count, response_time_ms, throughput_qps, cpu_usage_pct, memory_usage_mb}
 ```
 
 ---
@@ -96,15 +101,17 @@ Experimental Setup:
 
 Gunakan RQ dan variabel dari WS-05. Petakan ke komponen sistem.
 
-**RQ:** Apakah pengembangan sistem informasi penggajian di Politeknik Ganesha Guru menggunakan XP menghasilkan efisiensi waktu pemrosesan dan akurasi perhitungan yang lebih baik dibandingkan pengembangan tradisional/manual?
+**RQ:** RQ1: Perbedaan response time PostgreSQL vs MySQL pada CRUD? RQ2: Dampak indexing strategy? RQ3: Interaksi DBMS × indexing × optimization?
 
 | Variabel | Tipe | Komponen Sistem | Cara Manipulasi / Pengukuran |
 |----------|------|-----------------|----------------------------|
-| Metode pengembangan | IV | Process Framework Module | Config file: development_method=XP atau development_method=traditional |
-| Waktu pemrosesan payroll | DV | Performance Logger Module | Otomatis capture start_time dan end_time, hitung elapsed time per payroll cycle |
-| Akurasi perhitungan gaji | DV | Validation & Comparison Module | Bandingkan output sistem dengan perhitungan referensi, hitung persentase error |
-| Kepuasan pengguna | DV | Survey Collector Module | Form Likert 1-5 untuk admin dan stakeholder setelah penggunaan sistem |
-| Kompleksitas data payroll | CV | Data Configuration Module | Config: employee_count=50, salary_components=8, deduction_types=5 (tetap konstan) |
+| Jenis DBMS | IV | DBMS Connection Module | Config: dbms=postgresql atau dbms=mysql; koneksi ke server masing-masing DBMS |
+| Indexing Strategy | IV | Index Manager Module | Config: index_type=none/single/composite; script CREATE/DROP INDEX otomatis |
+| Query Optimization | IV | Query Template Module | Config: query_version=default/optimized; file template SQL terpisah |
+| Volume Data | CV | Data Generator Module | Config: record_count=50000/100000/250000/500000/1000000 (locked per trial) |
+| Response Time | DV | Benchmark Logger Module | Otomatis capture start_time dan end_time menggunakan high-resolution timer, hitung elapsed_time (ms) |
+| Throughput | DV | Throughput Calculator Module | Hitung QPS dari batch: total_queries_completed / total_elapsed_time |
+| Jenis Operasi CRUD | CV | Query Executor Module | Config: operation=SELECT/INSERT/UPDATE/DELETE (locked per trial) |
 
 **Apakah semua variabel bisa di-map?** [x] Ya / [ ] Tidak
 > Jika tidak, komponen apa yang perlu ditambahkan? —
@@ -117,32 +124,36 @@ Evaluasi desain sistem terhadap 4 prinsip.
 
 | Prinsip | Status | Bukti / Penjelasan |
 |---------|--------|-------------------|
-| Traceability | ✅ | Setiap modul (Process Framework, Performance Logger, Validation, Survey Collector) dapat ditelusuri ke satu atau lebih variabel RQ. |
-| Modularity | ✅ | Process Framework Module dapat di-toggle antara XP dan tradisional tanpa mengubah modul pengukuran (Performance Logger, Validation, Survey Collector). |
-| Controllability | ✅ | Kompleksitas data (CV) dikontrol melalui config file yang tetap selama eksperimen, mencegah noise eksternal. |
-| Measurability | ✅ | Sistem otomatis menghasilkan output dalam format terstruktur (JSON log) untuk DV: waktu pemrosesan, akurasi, kepuasan pengguna. |
+| Traceability | ✅ | Setiap modul (DBMS Connection, Index Manager, Query Template, Data Generator, Benchmark Logger, Throughput Calculator, Query Executor) dapat ditelusuri ke satu atau lebih variabel RQ. |
+| Modularity | ✅ | DBMS Connection Module bisa di-swap antara PostgreSQL dan MySQL tanpa mengubah modul lain. Index Manager bisa toggle antara none/single/composite tanpa mengubah Query Executor atau Logger. |
+| Controllability | ✅ | Semua CV (volume data, skema database, hardware spec) dikontrol melalui config file YAML yang locked selama satu trial. Indexing strategy sebagai IV dikonfigurasi via script terpisah yang dijalankan sebelum trial. |
+| Measurability | ✅ | Benchmark Logger otomatis menghasilkan output JSON terstruktur untuk DV: response_time_ms, throughput_qps. Output siap untuk analisis statistik langsung. |
 
 **Prinsip mana yang paling sulit dipenuhi?** Controllability
 **Strategi untuk mengatasinya:**
-> Menggunakan konfigurasi file yang explicit (YAML/JSON) untuk semua parameter data (jumlah pegawai, komponen gaji, potongan pajak). Sebelum eksperimen dimulai, lock config file agar tidak berubah. Dokumentasikan versi config yang digunakan untuk setiap trial eksperimen agar reproducible.
+> Menggunakan konfigurasi YAML yang eksplisit untuk semua parameter (DBMS, indexing, optimization, volume data, operasi CRUD). Sebelum setiap trial, jalankan setup script yang: (1) drop dan recreate database, (2) generate data sesuai record_count, (3) apply indexing sesuai index_type, (4) clear DBMS cache. Dokumentasikan versi config dan checksum dataset yang digunakan untuk setiap trial agar fully reproducible. Gunakan Docker container untuk kedua DBMS dengan resource limit yang identik.
 
 ---
 
 ## Latihan 3 — Ablation Study Planning
 
-Jika sistem memiliki komponen utama untuk XP dan untuk tradisional, rencanakan ablation study.
+Jika sistem memiliki komponen utama untuk indexing dan optimization, rencanakan ablation study.
 
-| Kondisi | Metode | Performance Logger | Validation Module | Survey Collector | Hasil yang Diharapkan |
-|---------|--------|------|------|---------|---------------------|
-| Full (XP) | ✅ XP | ✅ On | ✅ On | ✅ On | Baseline XP: waktu pemrosesan min, akurasi max, kepuasan user tinggi |
-| Full (Tradisional) | ✅ Traditional | ✅ On | ✅ On | ✅ On | Baseline tradisional: waktu pemrosesan lebih lama, akurasi lebih rendah |
-| – Performance Logger | ✅ XP | ❌ Off | ✅ On | ✅ On | Tidak bisa mengukur waktu pemrosesan (data waktu hilang) |
-| – Validation Module | ✅ XP | ✅ On | ❌ Off | ✅ On | Tidak bisa mengukur akurasi perhitungan (error rate unknown) |
-| – Survey Collector | ✅ XP | ✅ On | ✅ On | ❌ Off | Tidak bisa mengukur kepuasan pengguna (feedback missing) |
+| Kondisi | DBMS | Indexing | Optimization | Benchmark Logger | Throughput Calc | Hasil yang Diharapkan |
+|---------|------|----------|-------------|-----------------|----------------|---------------------|
+| Full (baseline) | PostgreSQL | None | Default | ✅ On | ✅ On | Baseline: response time tanpa optimasi apapun |
+| + Single Index | PostgreSQL | Single | Default | ✅ On | ✅ On | Dampak single-column index saja |
+| + Composite Index | PostgreSQL | Composite | Default | ✅ On | ✅ On | Dampak composite index saja |
+| + Optimized Query | PostgreSQL | None | Optimized | ✅ On | ✅ On | Dampak query rewriting saja |
+| Full Optimized | PostgreSQL | Composite | Optimized | ✅ On | ✅ On | Dampak kombinasi indexing + optimization |
+| Full (MySQL) | MySQL | None | Default | ✅ On | ✅ On | Baseline MySQL tanpa optimasi |
+| + MySQL Optimized | MySQL | Composite | Optimized | ✅ On | ✅ On | Dampak kombinasi pada MySQL |
+| – Benchmark Logger | PostgreSQL | Composite | Optimized | ❌ Off | ✅ On | Tidak bisa mengukur response time per query (data hilang) |
+| – Throughput Calc | PostgreSQL | Composite | Optimized | ✅ On | ❌ Off | Tidak bisa mengukur QPS (throughput unknown) |
 
-**Komponen mana yang diprediksi paling berkontribusi?** Performance Logger (modul pengukuran waktu pemrosesan)
+**Komponen mana yang diprediksi paling berkontribusi?** Index Manager Module (modul pengelolaan indexing)
 **Mengapa?**
-> Waktu pemrosesan adalah salah satu DV utama dalam hipotesis dan metrik terkunci untuk membuktikan efisiensi XP. Tanpa Performance Logger, tidak bisa mengumpulkan data utama untuk menerima atau menolak H₁. Selain itu, waktu pemrosesan adalah indikator langsung dari metodologi pengembangan (XP dengan iterasi pendek vs tradisional dengan fase panjang).
+> Indexing adalah teknik optimasi paling fundamental di database dan dampaknya terhadap response time sangat signifikan, terutama pada query SELECT dan UPDATE/DELETE dengan WHERE clause. Tanpa Index Manager, tidak bisa mengisolasi dampak indexing dari faktor lain. Selain itu, inkonsistensi hasil studi sebelumnya (Gap dari WS-03) diduga kuat disebabkan oleh ketiadaan kontrol indexing, sehingga modul ini adalah kunci untuk menjawab RQ2 dan RQ3.
 
 ---
 
@@ -151,4 +162,4 @@ Jika sistem memiliki komponen utama untuk XP dan untuk tradisional, rencanakan a
 > Apa risiko jika sistem dibangun seperti produk (monolitik, fitur lengkap) lalu baru dilakukan eksperimen? Mengapa arsitektur modular penting untuk riset?
 
 **Jawaban:**
-> Risiko monolitik: sulit mengisolasi variabel karena semua komponen terikat erat. Jika ingin membandingkan XP vs tradisional, tidak bisa swap metode tanpa rebuild seluruh sistem. Hasilnya tidak bisa direproduksi, dan sulit tahu kontribusi setiap komponen. Arsitektur modular penting karena memungkinkan toggle variabel independen (feature flags, config-driven execution) sehingga hanya variabel eksperimen yang berubah, CV terkontrol, dan DV dapat diukur dengan bersih. Dengan modular design, eksperimen menjadi reproducible dan causal inferences lebih kuat karena isolasi variabel terjaga.
+> Risiko monolitik: sulit mengisolasi variabel karena semua komponen terikat erat. Jika ingin membandingkan PostgreSQL vs MySQL dengan dan tanpa indexing, tidak bisa swap DBMS atau toggle indexing tanpa rebuild seluruh sistem. Hasilnya tidak bisa direproduksi, dan sulit tahu kontribusi setiap faktor (indexing vs optimization vs DBMS). Arsitektur modular penting karena memungkinkan toggle variabel independen (DBMS swap, indexing config, query template swap) melalui config-driven execution, sehingga hanya variabel eksperimen yang berubah, CV terkontrol, dan DV dapat diukur dengan bersih. Dengan modular design, eksperimen menjadi reproducible dan causal inferences lebih kuat karena isolasi variabel terjaga. Dalam konteks benchmarking DBMS, modularitas memastikan bahwa setiap faktor (DBMS, indexing, optimization) dapat diukur dampaknya secara independen dan dalam interaksi.

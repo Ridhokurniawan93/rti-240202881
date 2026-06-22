@@ -13,7 +13,7 @@ Pengetahuan ilmiah tidak muncul langsung dari kenyataan. Ia melewati **6 tahap t
 Reality → Data → Processing → Analysis → Inference → Knowledge
 ```
 
-Contoh: observasi sistem penggajian manual di Politeknik Ganesha Guru menghasilkan data pegawai dan gaji. Distorsi dapat terjadi jika data yang dikumpulkan tidak lengkap, jika input data dimasukkan secara salah, atau jika simpulan dibuat tanpa evaluasi nyata.
+Contoh: observasi kinerja database PostgreSQL dan MySQL dalam workload CRUD menghasilkan data response time. Distorsi dapat terjadi jika data yang dikumpulkan tidak representatif (misalnya hanya satu volume data), jika query yang diuji tidak standar, atau jika simpulan dibuat tanpa memperhitungkan faktor konfigurasi dan indexing.
 
 Etika mencegah distorsi yang disengaja (fabrikasi, cherry-picking). Validitas mendeteksi distorsi yang tidak disengaja (confounding variable, sampling bias).
 
@@ -21,27 +21,27 @@ Etika mencegah distorsi yang disengaja (fabrikasi, cherry-picking). Validitas me
 
 | Jenis | Pertanyaan | Contoh Ancaman |
 |-------|-----------|----------------|
-| **Internal Validity** | Apakah hubungan kausal benar ada? | Klaim XP meningkatkan efisiensi tanpa kontrol terhadap faktor lain |
-| **External Validity** | Apakah bisa digeneralisasi? | Hasil hanya diambil dari satu kampus, bukan dari beberapa organisasi |
-| **Construct Validity** | Apakah mengukur hal yang benar? | Metrik efisiensi hanya berdasarkan fungsi sistem, bukan kepuasan pengguna |
+| **Internal Validity** | Apakah hubungan kausal benar ada? | Klaim indexing meningkatkan performa tanpa mengontrol volume data dan konfigurasi hardware |
+| **External Validity** | Apakah bisa digeneralisasi? | Hasil hanya dari satu spesifikasi hardware dan satu skema database |
+| **Construct Validity** | Apakah mengukur hal yang benar? | Performa hanya diukur dari response time tanpa mempertimbangkan throughput dan resource utilization |
 
 ### Paradigma Riset
 
 Studi menunjukkan dua pendekatan sekaligus:
-- **Positivis**: mengukur efisiensi dan akurasi secara kuantitatif melalui pengujian dan evaluasi sistem.
-- **Design Science**: mengembangkan artefak sistem informasi penggajian sebagai alat untuk menguji hipotesis peningkatan efisiensi.
+- **Positivis**: mengukur response time dan performa secara kuantitatif melalui pengujian eksperimental dengan kontrol variabel.
+- **Design Science**: mengembangkan framework pengujian benchmarking sebagai artefak untuk menguji hipotesis perbedaan performa.
 
 ### Mode Berpikir Peneliti
 
-**Curious** (mengapa penggajian manual bermasalah?) → **Critical** (apa bukti bahwa XP menyelesaikan masalah?) → **Systematic** (bagaimana prosedur penelitian dirancang agar dapat direplikasi?).
+**Curious** (mengapa performa MySQL dan PostgreSQL berbeda pada workload CRUD?) → **Critical** (apa bukti bahwa query optimization dan indexing memberikan dampak signifikan?) → **Systematic** (bagaimana prosedur pengujian dirancang agar dapat direplikasi?).
 
 ### Research vs Engineering
 
 | Aspek | Engineering | Research |
 |-------|------------|----------|
-| Tujuan | Membuat sistem yang bekerja | Menghasilkan pengetahuan yang valid |
-| Pertanyaan khas | "Bagaimana membuatnya jalan?" | "Apakah klaim ini benar?" |
-| Ukuran sukses | Sistem berfungsi, client puas | Hipotesis terjawab, temuan tervalidasi |
+| Tujuan | Memilih database terbaik untuk proyek | Menghasilkan pengetahuan valid tentang dampak optimasi |
+| Pertanyaan khas | "Database mana yang lebih cepat?" | "Apakah indexing strategy berdampak signifikan terhadap performa?" |
+| Ukuran sukses | Database terpilih, sistem berjalan | Hipotesis terjawab, temuan tervalidasi |
 | Kegagalan | Harus dihindari | Harus dilaporkan (negative result = kontribusi) |
 
 ### Istilah Penting
@@ -55,34 +55,34 @@ Studi menunjukkan dua pendekatan sekaligus:
 
 ## Contoh Ringkas
 
-- Masalah utama: sistem penggajian di Kampus Politeknik Ganesha Guru masih manual, menyebabkan redundansi data dan kesalahan perhitungan.
-- Solusi: sistem informasi penggajian berbasis PHP dan MySQL dengan metode Extreme Programming.
-- Pengujian: black-box testing dan pengumpulan umpan balik pengguna.
-- Hasil: sistem berfungsi sesuai kebutuhan dan meningkatkan efisiensi serta akurasi.
+- Masalah utama: perbedaan performa antara PostgreSQL dan MySQL pada workload CRUD belum dipahami secara menyeluruh, khususnya terkait dampak query optimization dan indexing strategy.
+- Solusi: pengujian eksperimental terkontrol dengan variasi strategi indexing dan query optimization pada kedua DBMS.
+- Pengujian: benchmarking dengan query CRUD (SELECT, INSERT, UPDATE, DELETE) pada berbagai volume data.
+- Hasil: identifikasi dampak spesifik query optimization dan indexing terhadap performa masing-masing DBMS.
 
 ---
 
 ## Research Mindset Self-Assessment
 ```
 Nama Peneliti    : Ridho Kurniawan
-Tanggal          : 11 April 2026
+Tanggal          : 22 Juni 2026
 
-1. Ketika membaca klaim "metode X 95% akurat":
-   - Pertanyaan pertama saya: Apakah data dan metode pengujian sudah dijelaskan secara lengkap?
-   - Data yang dibutuhkan untuk verifikasi: Data input, prosedur pengujian, ukuran efisiensi, serta kondisi eksperimen.
+1. Ketika membaca klaim "PostgreSQL lebih cepat dari MySQL":
+   - Pertanyaan pertama saya: Apakah pengujian dilakukan dengan konfigurasi yang adil, termasuk indexing strategy yang setara?
+   - Data yang dibutuhkan untuk verifikasi: Spesifikasi hardware, konfigurasi database, strategi indexing, volume data, query yang diuji, serta prosedur pengukuran response time.
 
 2. Posisi paradigma:
    - Pendekatan: [x] Positivis  [ ] Interpretivis  [ ] Design Science  [ ] Mixed
-   - Alasan: Studi mengukur efisiensi dan akurasi secara kuantitatif dari sebuah sistem artefak.
+   - Alasan: Studi mengukur performa database secara kuantitatif melalui eksperimen terkontrol dengan metrik response time.
 
 3. Identifikasi distorsi:
-   - Asumsi tersembunyi: Bahwa semua masalah penggajian dapat diselesaikan hanya dengan sistem baru.
-   - Sumber bias potensial: Hanya satu lokasi studi, data manual dari satu instansi, dan tidak ada pembanding dengan metode lain.
-   - Langkah mitigasi: Laporkan batasan, gunakan data yang lebih luas, dan lakukan validasi pengguna eksternal.
+   - Asumsi tersembunyi: Bahwa perbedaan performa hanya disebabkan oleh DBMS itu sendiri, tanpa mempertimbangkan konfigurasi, indexing, dan workload.
+   - Sumber bias potensial: Spesifikasi hardware yang berbeda, konfigurasi default yang tidak setara, dan ketiadaan strategi indexing yang terkontrol.
+   - Langkah mitigasi: Gunakan hardware identik, standarisasi konfigurasi, dan dokumentasikan semua parameter pengujian.
 
 4. Komitmen etika:
-   - Data yang tidak akan dimanipulasi: Data gaji pegawai, hasil pengujian fungsional, laporan bug.
-   - Batasan yang diakui sejak awal: Sampel terbatas pada Politeknik Ganesha Guru dan metode pengujian utama adalah black-box testing.
+   - Data yang tidak akan dimanipulasi: Response time hasil pengujian, konfigurasi database, hasil statistik.
+   - Batasan yang diakui sejak awal: Pengujian terbatas pada satu spesifikasi hardware dan skema database tertentu.
 ```
 
 ---
@@ -92,22 +92,22 @@ Tanggal          : 11 April 2026
 Pilih satu paper riset di bidang TI yang mengklaim "metode X meningkatkan performa." Telusuri setiap tahap Research Trust Model.
 
 **Paper yang dipilih:**
-> Judul: Implementasi Metode Extreme Programming dalam Pengembangan Sistem Informasi Penggajian di Kampus Politeknik Ganesha Guru
-> Penulis (Tahun): Putu Maha Putra dkk. (2025)
+> Judul: SQL Inner Join: MySQL and PostgreSQL Performance
+> Penulis (Tahun): Ummul Hairah (2020)
 
 | Tahap | Apa yang Dilakukan | Potensi Distorsi |
 |-------|-------------------|-----------------|
-| Reality → Data | Mengamati kondisi penggajian manual di kampus dan mencatat masalah seperti redundansi dan kesalahan perhitungan. | Data observasi bisa tidak lengkap atau hanya berasal dari satu unit organisasi. |
-| Data → Processing | Mengolah data kebutuhan pengguna dan perancangan sistem dengan DFD/ERD. | Asumsi fitur bisa bias jika hanya berdasarkan wawancara terbatas atau input manual yang salah. |
-| Processing → Analysis | Menganalisis desain sistem, pemilihan XP, dan rencana pengujian. | Analisis dapat keliru jika tidak membandingkan dengan metode pengembangan lain atau tidak mempertimbangkan faktor eksternal. |
-| Analysis → Inference | Menyimpulkan bahwa XP meningkatkan efisiensi dan akurasi. | Klaim bisa terlalu kuat jika hanya didukung oleh pengujian terbatas dan tanpa pembandingan kuantitatif. |
-| Inference → Knowledge | Menyebarluaskan temuan bahwa sistem informasi penggajian dengan XP efektif di kampus tersebut. | Hasil mungkin tidak generalis, karena hanya satu studi kasus dan tanpa uji ulang di organisasi lain. |
+| Reality → Data | Mengamati perbedaan performa MySQL dan PostgreSQL pada query inner join dengan data pharmacy dari 50.000 hingga 1.050.000 record. | Data hanya berasal dari satu skema database (pharmacy) dan satu jenis query (inner join), tidak mencakup workload CRUD secara lengkap. |
+| Data → Processing | Mengukur response time menggunakan HeidiSQL 10.2 pada kedua DBMS dengan struktur tabel dan jumlah record yang identik. | Potensi distorsi dari konfigurasi default DBMS yang tidak disetarakan, serta ketiadaan strategi indexing yang terkontrol. |
+| Processing → Analysis | Menganalisis data menggunakan regresi linier berganda, F-test, dan T-test untuk mengetahui pengaruh jumlah data dan relasi terhadap response time. | Analisis hanya menggunakan satu metode statistik; tidak mempertimbangkan faktor lain seperti penggunaan memori, CPU, atau konfigurasi server. |
+| Analysis → Inference | Menyimpulkan bahwa PostgreSQL lebih cepat dari MySQL berdasarkan response time inner join, didukung uji statistik F-test dan T-test. | Klaim bisa terlalu luas karena hanya diuji pada query inner join, bukan pada operasi CRUD lengkap (INSERT, UPDATE, DELETE). |
+| Inference → Knowledge | Menyebarluaskan temuan bahwa PostgreSQL memiliki response time lebih cepat daripada MySQL untuk operasi join. | Hasil mungkin tidak generalis karena hanya satu skema database, satu hardware, dan tanpa variasi indexing strategy. |
 
 **Distorsi paling besar di tahap:** Reality → Data
 
 **Dua distorsi spesifik yang teridentifikasi:**
-1. Pengumpulan data masalah penggajian manual hanya dari satu kampus, sehingga temuan bisa tidak mewakili situasi penggajian di institusi lain.
-2. Input data manual pada tahap pemrosesan bisa menghasilkan kesalahan dan menyebabkan sistem baru dibangun berdasarkan informasi yang tidak akurat.
+1. Pengujian hanya menggunakan satu jenis query (inner join) tanpa mencakup operasi CRUD lainnya (SELECT sederhana, INSERT, UPDATE, DELETE), sehingga kesimpulan tentang performa keseluruhan DBMS menjadi tidak lengkap.
+2. Tidak adanya kontrol terhadap strategi indexing dan konfigurasi DBMS yang dapat memengaruhi response time secara signifikan, sehingga perbedaan performa bisa jadi disebabkan oleh konfigurasi, bukan kemampuan inherent DBMS.
 
 ---
 
@@ -128,23 +128,22 @@ Skenario: Seorang peneliti menemukan bahwa jika 3 data point outlier dihapus, ha
 
 ## Latihan 3 — Posisi Paradigma
 
-**Topik riset:** Implementasi metode Extreme Programming dalam pengembangan sistem informasi penggajian di Politeknik Ganesha Guru
+**Topik riset:** Analisis Dampak Query Optimization dan Indexing Strategy terhadap Performa PostgreSQL dan MySQL dalam Workload CRUD
 
 | Kriteria | Positivis | Interpretivis | Design Science |
 |----------|-----------|---------------|----------------|
-| Kesesuaian dengan topik (1–5) | 5 | 2 | 5 |
-| Jenis data yang dikumpulkan | Waktu pengembangan, akurasi perhitungan, hasil pengujian black-box | Wawancara pengguna, pengalaman penggunaan | Data artefak, hasil iterasi pengembangan, evaluasi fungsional |
-| Limitasi paradigma | Mungkin mengabaikan konteks sosial dan pengalaman pengguna | Kurang cocok untuk klaim efisiensi kuantitatif | Hasil terbatas pada artefak yang dikembangkan, sulit digeneralisasi tanpa replikasi |
+| Kesesuaian dengan topik (1–5) | 5 | 2 | 4 |
+| Jenis data yang dikumpulkan | Response time (ms), throughput (QPS), CPU/memory usage, hasil uji statistik | Pengalaman developer dalam memilih database | Artefak benchmarking framework, hasil evaluasi eksperimen |
+| Limitasi paradigma | Mungkin mengabaikan konteks penggunaan nyata dan preferensi developer | Kurang cocok untuk klaim performa kuantitatif | Hasil terbatas pada artefak yang dikembangkan, sulit digeneralisasi tanpa replikasi |
 
-**Paradigma yang dipilih:** Design Science
-**Alasan:** Topik berfokus pada pengembangan artefak sistem informasi sebagai instrumen untuk menguji klaim peningkatan efisiensi dan akurasi.
+**Paradigma yang dipilih:** Positivis
+**Alasan:** Topik berfokus pada pengukuran performa database secara kuantitatif melalui eksperimen terkontrol, dengan metrik response time yang objektif dan analisis statistik untuk membuktikan dampak query optimization dan indexing strategy.
 
 ---
 
 ## Refleksi
 
-> Sebelum membaca materi ini, apakah pernah mempertanyakan klaim "95% akurat"? Setelah memahami rantai distorsi, pertanyaan apa yang sekarang akan diajukan saat membaca paper?
+> Sebelum membaca materi ini, apakah pernah mempertanyakan klaim "PostgreSQL lebih cepat dari MySQL"? Setelah memahami rantai distorsi, pertanyaan apa yang sekarang akan diajukan saat membaca paper?
 
 **Jawaban:**
-> Saya sekarang akan menanyakan apakah data awal valid, apakah metode pengujian sesuai dengan klaim, dan apakah hasil dapat digeneralisasi di luar konteks satu kampus. Saya juga akan mempertanyakan apakah ada asumsi tersembunyi yang membuat klaim efisiensi terlalu optimistis.
-
+> Saya sekarang akan menanyakan apakah konfigurasi kedua DBMS sudah disetarakan, apakah strategi indexing sudah dikontrol, apakah pengujian mencakup workload CRUD yang lengkap, dan apakah hasil dapat direplikasi pada hardware dan skema database yang berbeda. Saya juga akan mempertanyakan apakah ada confounding variable seperti perbedaan versi DBMS, konfigurasi buffer pool, atau cache yang tidak dikontrol.

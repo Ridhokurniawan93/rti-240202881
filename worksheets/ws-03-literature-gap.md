@@ -10,27 +10,28 @@
 
 Literature review bukan merangkum paper satu per satu. Pendekatan yang benar adalah **concept-centric** — organisasi berdasarkan tema, metode, atau variabel. Tujuan: menemukan **pola, kontradiksi, dan gap**.
 
-   literatur diorganisir dalam 3 konsep utama:
-1. **Sistem Informasi Penggajian** — definisi, komponen, manfaat teknologi
-2. **Extreme Programming (XP)** — metodologi, prinsip, hasil implementasi
-3. **Penelitian Terkait** — studi sebelumnya pada konteks berbeda
+Literatur diorganisir dalam 3 konsep utama:
+1. **Perbandingan Performa DBMS** — MySQL vs PostgreSQL, metrik response time, throughput
+2. **Query Optimization & Indexing Strategy** — teknik optimasi query, jenis indexing, dampaknya terhadap performa
+3. **Workload CRUD** — operasi SELECT, INSERT, UPDATE, DELETE dan karakteristik performanya
+
 **Perbandingan pendekatan Author-centric vs Concept-centric:**
 
 | Aspek | Author-centric (Hindari) | Concept-centric (Gunakan) |
 |-------|--------------------------|---------------------------|
-| Struktur | Per penulis/paper ("Rahman et al. menyatakan...") | Per konsep/metode ("Pendekatan berbasis transformer") |
+| Struktur | Per penulis/paper ("Hairah et al. menyatakan...") | Per konsep/metode ("Pengujian response time pada query inner join") |
 | Tujuan | Ringkasan isi paper | Perbandingan metode & identifikasi gap |
-| Contoh paragraph | "Rahman (2023) pakai CNN. Lee (2022) pakai LSTM. Zhang (2021) pakai RF." | "Tiga pendekatan dominan: CNN digunakan oleh 4 paper untuk representasi fitur visual; LSTM untuk data sekuensial; RF sebagai baseline klasik." |
+| Contoh paragraph | "Hairah (2020) pakai F-test. Ahsa (2023) pakai CRUD. Wendri (2022) pakai Sysbench." | "Tiga pendekatan dominan dalam benchmarking DBMS: pengujian response time query tunggal (Hairah, 2020; Praba & Safitri, 2020), pengujian CRUD lengkap (Ahsa et al., 2023; Winata & Putra, 2021), dan benchmarking berbasis beban kerja (Wendri et al., 2022)." |
 | Hasil akhir | Daftar paper | Peta pengetahuan + gap yang teridentifikasi |
 
 ### Empat Jenis Research Gap
 
 | Jenis Gap | Deskripsi | Contoh |
 |-----------|----------|--------|
-| **Performance Gap** | Performa belum memadai | Akurasi deteksi hanya 78% pada kasus tertentu |
-| **Method Gap** | Pendekatan belum diterapkan | Belum ada yang pakai transformer untuk task ini |
-| **Data Gap** | Dataset terbatas/tidak representatif | Semua studi pakai dataset sintetis |
-| **Context Gap** | Belum diuji pada konteks berbeda | Belum ada evaluasi di negara berkembang |
+| **Performance Gap** | Performa belum memadai | Hasil perbandingan tidak konsisten antar studi |
+| **Method Gap** | Pendekatan belum diterapkan | Belum ada yang mengontrol indexing strategy sebagai variabel eksperimen |
+| **Data Gap** | Dataset terbatas/tidak representatif | Semua studi pakai skema database sederhana tanpa relasi kompleks |
+| **Context Gap** | Belum diuji pada konteks berbeda | Belum ada evaluasi dampak indexing dan optimization pada workload CRUD lengkap |
 
 Gap terkuat = kombinasi 2+ jenis.
 
@@ -40,7 +41,7 @@ Gap terkuat = kombinasi 2+ jenis.
    - Akses IEEE/ACM melalui jaringan kampus atau VPN institusi
    - Alternatif bebas biaya: Google Scholar, ResearchGate ([researchgate.net](https://www.researchgate.net)), arXiv ([arxiv.org](https://arxiv.org))
 2. **Boolean query** yang terdokumentasi eksplisit
-   - Contoh: `("anomaly detection" OR "intrusion detection") AND ("deep learning" OR "neural network") NOT ("medical imaging")`
+   - Contoh: `("MySQL" OR "PostgreSQL") AND ("performance" OR "benchmarking") AND ("query optimization" OR "indexing") AND ("CRUD" OR "workload")`
    - Gunakan tanda kutip untuk frasa eksak; AND/OR/NOT mengontrol scope
 3. **Snowballing** — dua arah:
    - **Backward snowballing**: buka daftar referensi di paper kunci → telusuri paper yang dikutip
@@ -52,11 +53,11 @@ Gap terkuat = kombinasi 2+ jenis.
 
 | Kriteria | Pertanyaan | Contoh |
 |----------|-----------|--------|
-| **Relevan** | Apakah menyelesaikan masalah yang sama? | Agus & Gustiawan [13] relevan: XP untuk sistem penggajian, meski di konteks berbeda |
-| **Representatif** | Apakah mewakili common practice? | Semua studi terkait pakai XP atau Agile, bukan waterfall → XP adalah baseline yang tepat |
-| **State-of-the-Art** | Apakah terbaru/terbaik? | Fajar et al. [15] lebih baru, tapi White et al. [12] lebih rigorous (30% improvement) |
+| **Relevan** | Apakah menyelesaikan masalah yang sama? | Ahsa et al. (2023) relevan: perbandingan performa MySQL vs PostgreSQL dengan CRUD |
+| **Representatif** | Apakah mewakili common practice? | Pengujian response time CRUD tanpa indexing = common practice di studi sebelumnya |
+| **State-of-the-Art** | Apakah terbaru/terbaik? | Wendri et al. (2022) menggunakan Sysbench dan Independent Sample T-Test, pendekatan lebih rigor |
 
-Membandingkan deep learning 2024 dengan decision tree sederhana tanpa justifikasi = **straw man comparison** (perbandingan tidak jujur).
+Membandingkan PostgreSQL (dengan indexing + optimization) vs MySQL (tanpa indexing, default config) = **straw man comparison** (perbandingan tidak jujur).
 
 ### Research vs Engineering
 
@@ -81,44 +82,49 @@ Membandingkan deep learning 2024 dengan decision tree sederhana tanpa justifikas
 ```
 LITERATURE MAPPING
 
-Topik      : Implementasi Metode Extreme Programming dalam Pengembangan Sistem Informasi Penggajian
+Topik      : Analisis Dampak Query Optimization dan Indexing Strategy terhadap Performa PostgreSQL dan MySQL dalam Workload CRUD
 Database   : Google Scholar, IEEE Xplore
-Query      : ("extreme programming" OR "XP") AND ("payroll system" OR "salary information system") AND ("agile development")
-Tahun      : 2020-2025
+Query      : ("MySQL" OR "PostgreSQL") AND ("performance" OR "benchmarking") AND ("query optimization" OR "indexing" OR "response time") AND ("CRUD")
+Tahun      : 2020-2023
 Hasil awal : 10 paper → Screening → 5 paper final
 
 Literature Matrix (concept-centric):
 
 | Study | Tahun | Method | Data | Result | Limitation |
 |-------|-------|--------|------|--------|------------|
-| White et al. | 2020 | XP practices in software engineering | Productivity analysis across projects | 30% productivity gain in agile projects | General software, not payroll-specific |
-| Agus & Gustiawan | 2021 | XP in payroll system development | PT. Pradana Energi Gemilang case study | 35% efficiency increase in payroll management | Specific to energy company, not educational institutions |
-| Setiawansyah et al. | 2022 | XP in overtime payroll accounting | PT. Sugar Labinta case study | 20% accuracy improvement in salary calculations | Focused on overtime, not general payroll |
-| Fajar et al. | 2023 | XP in payroll system implementation | General software development | Faster implementation time with better code quality | No specific metrics on accuracy or efficiency |
-| Johnson & Lee | 2022 | Agile methodologies in payroll system development | Case studies in educational institutions | Improved efficiency and user satisfaction | Limited to specific contexts, not comprehensive metrics |
+| Hairah | 2020 | F-test & T-test pada response time inner join query | Database pharmacy, 50.000-1.050.000 record | PostgreSQL lebih cepat dari MySQL pada inner join; F-test menunjukkan pengaruh signifikan jumlah data dan relasi terhadap response time | Hanya menguji query inner join, bukan workload CRUD lengkap; tidak ada kontrol indexing strategy |
+| Ahsa et al. | 2023 | Pengujian CRUD (SELECT, INSERT, UPDATE, DELETE) | Dataset Google Playstore, 19 kolom, 50.000-250.000 record | PostgreSQL lebih unggul dengan response time tidak pernah lebih dari 4 detik; selisih rata-rata 481,24s pada INSERT | Tidak menguji strategi indexing; konfigurasi default tanpa optimasi; tidak ada analisis statistik inferensial |
+| Winata & Putra | 2021 | Pengujian response time CRUD pada 3 database (MySQL, PostgreSQL, MongoDB) | Dataset Android Permission, 6 kolom, 250-25.000 record | PostgreSQL paling unggul dengan response time tidak pernah lebih dari 150ms; MySQL paling lambat | Tidak menguji indexing; dataset relatif kecil (max 25.000); tanpa relasi antar tabel |
+| Wendri et al. | 2022 | Sysbench benchmarking + Independent Sample T-Test | 24 tabel × 100.000 record, client-server setup | MySQL lebih baik dari PostgreSQL pada Read, Write, Transaction, Average, dan Execution Time | Menggunakan Sysbench (OLTP workload) bukan custom CRUD queries; tidak membahas indexing strategy secara eksplisit |
+| Praba & Safitri | 2020 | Pengujian response time dengan query SELECT, JOIN, COUNT | Dataset Faker (data mahasiswa), 50.000-1.000.000 record | PostgreSQL lebih cepat dengan selisih rata-rata 0,44s; PostgreSQL lebih unggul pada semua query | Tidak menguji INSERT, UPDATE, DELETE; tidak ada kontrol indexing; tanpa analisis statistik inferensial |
 
 Pola yang ditemukan:
-  Metode dominan     : Extreme Programming (XP) sebagai metode agile untuk pengembangan sistem informasi
-  Dataset umum       : Case studies dari perusahaan swasta
-  Limitasi berulang  : Kurangnya aplikasi spesifik pada konteks institusi pendidikan, fokus pada perusahaan swasta, dan kurangnya metrik kuantitatif untuk efisiensi dan akurasi
+  Metode dominan     : Pengujian response time per query pada kedua DBMS dengan variasi volume data
+  Dataset umum       : Dataset sintetis atau publik (pharmacy, Google Playstore, Android Permission, Faker)
+  Limitasi berulang  : Tidak ada kontrol strategi indexing sebagai variabel; sebagian besar tidak menggunakan analisis statistik inferensial; workload tidak selalu mencakup CRUD lengkap
 
 GAP IDENTIFICATION
 
-Gap 1: [Jenis: performance]
-  Deskripsi    : Metrik efisiensi dan akurasi dalam implementasi XP pada sistem penggajian belum konsisten dan spesifik
-  Bukti        : Hasil studi bervariasi dari 20% hingga 35% peningkatan, tanpa standar pengukuran yang seragam
-  Signifikansi : Penting untuk menentukan apakah XP benar-benar efektif dalam meningkatkan performa sistem penggajian
+Gap 1: [Jenis: method]
+  Deskripsi    : Studi sebelumnya tidak mengontrol strategi indexing (no index, single-column, composite) sebagai variabel independen dalam perbandingan performa DBMS
+  Bukti        : Hairah (2020), Ahsa et al. (2023), Winata & Putra (2021), Praba & Safitri (2020) menggunakan konfigurasi default tanpa variasi indexing; Wendri et al. (2022) menggunakan Sysbench tanpa membahas indexing secara eksplisit
+  Signifikansi : Tanpa kontrol indexing, perbedaan performa yang dilaporkan mungkin disebabkan oleh strategi indexing default DBMS, bukan kemampuan inherent
 
-Gap 2: [Jenis: context]
-  Deskripsi    : Implementasi XP pada sistem penggajian belum dievaluasi di konteks institusi pendidikan Indonesia
-  Bukti        : Studi sebelumnya fokus pada perusahaan swasta, belum ada di lingkungan akademik seperti Politeknik Ganesha Guru
-  Signifikansi : Konteks pendidikan memiliki regulasi dan kebutuhan unik yang berbeda dari bisnis, sehingga hasil riset ini dapat memberikan kontribusi baru
+Gap 2: [Jenis: performance]
+  Deskripsi    : Hasil perbandingan performa MySQL vs PostgreSQL tidak konsisten antar studi
+  Bukti        : Hairah (2020), Ahsa et al. (2023), Winata & Putra (2021), Praba & Safitri (2020) menyimpulkan PostgreSQL lebih cepat; Wendri et al. (2022) menyimpulkan MySQL lebih baik pada throughput dan execution time
+  Signifikansi : Inkonsistensi menunjukkan adanya confounding variable (konfigurasi, indexing, workload) yang belum dikontrol
+
+Gap 3: [Jenis: data]
+  Deskripsi    : Tidak ada studi yang menguji interaksi antara query optimization (rewritten/optimized query) dan indexing strategy terhadap performa kedua DBMS secara simultan
+  Bukti        : Studi sebelumnya hanya menguji query default tanpa variasi optimization level
+  Signifikansi : Dalam praktik nyata, developer menggunakan kombinasi query optimization dan indexing; pemahaman interaksi keduanya penting untuk tuning yang optimal
 
 Baseline Selection:
 | Baseline | Relevansi | Representatif | Source |
 |----------|-----------|---------------|--------|
-| Sistem penggajian manual | Menyelesaikan masalah penggajian dengan proses tradisional | Mewakili praktik umum di institusi pendidikan | Agus & Gustiawan (2021) |
-| Metode pengembangan waterfall | Pendekatan tradisional untuk pengembangan sistem | Mewakili metode klasik sebelum agile | Sommerville (2016) |
+| Pengujian CRUD tanpa indexing (Ahsa et al., 2023) | Menguji performa CRUD pada MySQL vs PostgreSQL | Mewakili common practice di studi perbandingan DBMS | Ahsa et al. (2023), Winata & Putra (2021) |
+| Benchmarking dengan Sysbench + T-Test (Wendri et al., 2022) | Menggunakan metode statistik rigor untuk perbandingan performa | Mewakili pendekatan state-of-the-art dalam benchmarking DBMS | Wendri et al. (2022) |
 ```
 
 ---
@@ -127,20 +133,20 @@ Baseline Selection:
 
 Gunakan topik riset dari WS-02. Cari minimal 5 paper relevan menggunakan database akademik.
 
-**Topik riset:** Implementasi Metode Extreme Programming dalam Pengembangan Sistem Informasi Penggajian
-**Query pencarian:** ("extreme programming" OR "XP") AND ("payroll system" OR "salary information system") AND ("agile development")
+**Topik riset:** Analisis Dampak Query Optimization dan Indexing Strategy terhadap Performa PostgreSQL dan MySQL dalam Workload CRUD
+**Query pencarian:** ("MySQL" OR "PostgreSQL") AND ("performance" OR "benchmarking") AND ("query optimization" OR "indexing" OR "response time") AND ("CRUD")
 **Database:** Google Scholar, IEEE Xplore
 
 | # | Study | Tahun | Method | Dataset | Result | Limitasi |
 |---|-------|-------|--------|---------|--------|----------|
-| 1 | White et al. | 2020 | XP practices in software engineering | Productivity analysis across projects | 30% productivity gain in agile projects | General software, not payroll-specific |
-| 2 | Agus & Gustiawan | 2021 | XP in payroll system development | PT. Pradana Energi Gemilang case study | 35% efficiency increase in payroll management | Specific to energy company, not educational institutions |
-| 3 | Setiawansyah et al. | 2022 | XP in overtime payroll accounting | PT. Sugar Labinta case study | 20% accuracy improvement in salary calculations | Focused on overtime, not general payroll |
-| 4 | Fajar et al. | 2023 | XP in payroll system implementation | General software development | Faster implementation time with better code quality | No specific metrics on accuracy or efficiency |
-| 5 | Johnson & Lee | 2022 | Agile methodologies in payroll system development | Case studies in educational institutions | Improved efficiency and user satisfaction | Limited to specific contexts, not comprehensive metrics |
+| 1 | Hairah | 2020 | F-test & T-test pada response time inner join | Database pharmacy, 50.000-1.050.000 record, 21 eksperimen | PostgreSQL lebih cepat; F-test menunjukkan pengaruh signifikan jumlah data dan relasi | Hanya inner join, bukan CRUD lengkap; tanpa kontrol indexing |
+| 2 | Ahsa et al. | 2023 | CRUD benchmarking (SELECT, INSERT, UPDATE, DELETE) | Google Playstore dataset, 19 kolom, 50.000-250.000 record | PostgreSQL lebih unggul; selisih rata-rata 481,24s pada INSERT | Tanpa indexing strategy; tanpa analisis statistik inferensial |
+| 3 | Winata & Putra | 2021 | CRUD benchmarking pada 3 database | Android Permission, 6 kolom, 250-25.000 record | PostgreSQL paling unggul (< 150ms); MySQL paling lambat | Dataset kecil; tanpa relasi; tanpa indexing |
+| 4 | Wendri et al. | 2022 | Sysbench OLTP + Independent Sample T-Test | 24 tabel × 100.000 record, client-server | MySQL lebih baik pada Read, Write, Transaction, Average, Execution Time | OLTP workload bukan custom CRUD; tidak membahas indexing eksplisit |
+| 5 | Praba & Safitri | 2020 | Response time: SELECT, JOIN, COUNT | Dataset Faker, 50.000-1.000.000 record | PostgreSQL lebih cepat; selisih rata-rata 0,44s | Tanpa INSERT, UPDATE, DELETE; tanpa kontrol indexing; tanpa statistik inferensial |
 
-**Pola yang terlihat — Metode dominan:** Extreme Programming (XP) sebagai metode agile untuk pengembangan sistem informasi
-**Limitasi yang berulang:** Kurangnya aplikasi spesifik pada konteks institusi pendidikan, fokus pada perusahaan swasta, dan kurangnya metrik kuantitatif untuk efisiensi dan akurasi
+**Pola yang terlihat — Metode dominan:** Pengujian response time per query dengan variasi volume data pada kedua DBMS
+**Limitasi yang berulang:** Ketiadaan kontrol strategi indexing sebagai variabel; inkonsistensi hasil antar studi; sebagian besar tanpa analisis statistik inferensial
 
 ---
 
@@ -150,14 +156,14 @@ Berdasarkan tabel di Latihan 1, identifikasi gap.
 
 | Jenis Gap | Ditemukan? | Gap Statement |
 |-----------|-----------|---------------|
-| Performance Gap | [x] Ya / [ ] Tidak | Metrik efisiensi dan akurasi dalam implementasi XP pada sistem penggajian belum konsisten dan spesifik, dengan hasil bervariasi dari 20% hingga 35% peningkatan |
-| Method Gap | [ ] Ya / [x] Tidak | XP sudah diterapkan pada pengembangan sistem penggajian |
-| Data Gap | [ ] Ya / [x] Tidak | Dataset case study cukup representatif |
-| Context Gap | [x] Ya / [ ] Tidak | Implementasi XP pada sistem penggajian belum dievaluasi di konteks institusi pendidikan Indonesia seperti Politeknik Ganesha Guru |
+| Performance Gap | [x] Ya / [ ] Tidak | Hasil perbandingan performa MySQL vs PostgreSQL tidak konsisten: 4 studi menyimpulkan PostgreSQL lebih cepat, 1 studi menyimpulkan MySQL lebih baik |
+| Method Gap | [x] Ya / [ ] Tidak | Tidak ada studi yang mengontrol strategi indexing dan query optimization sebagai variabel independen dalam perbandingan performa DBMS |
+| Data Gap | [x] Ya / [ ] Tidak | Studi menggunakan dataset dan skema yang berbeda-beda tanpa standarisasi, menyulitkan perbandingan langsung |
+| Context Gap | [ ] Ya / [x] Tidak | Konteks workload CRUD sudah cukup terwakili oleh beberapa studi |
 
-**Gap utama yang dipilih:** Context Gap - Implementasi XP pada sistem penggajian belum dievaluasi di konteks institusi pendidikan Indonesia
+**Gap utama yang dipilih:** Method Gap + Performance Gap (kombinasi) — Tidak adanya kontrol strategi indexing dan query optimization sebagai variabel, yang menyebabkan inkonsistensi hasil perbandingan performa MySQL vs PostgreSQL.
 **Mengapa gap ini penting (bukan sekadar "belum ada yang meneliti")?**
-> Gap ini penting karena konteks institusi pendidikan memiliki karakteristik unik seperti regulasi pemerintah, keterbatasan SDM, dan kebutuhan transparansi yang berbeda dari perusahaan swasta. Studi sebelumnya fokus pada sektor bisnis, sehingga hasilnya mungkin tidak generalizable ke lingkungan akademik.
+> Gap ini penting karena inkonsistensi hasil antar studi (PostgreSQL lebih cepat vs MySQL lebih baik) menunjukkan adanya confounding variable yang belum dikontrol. Dalam praktik nyata, DBA selalu menggunakan indexing dan query optimization sebagai strategi tuning. Tanpa mengontrol variabel ini, klaim performa suatu DBMS menjadi tidak valid karena perbedaan mungkin disebabkan oleh konfigurasi, bukan kemampuan inherent DBMS.
 
 ---
 
@@ -167,11 +173,11 @@ Pilih 2 baseline dari literatur yang sudah dibaca.
 
 | # | Baseline | Mengapa Relevan | Mengapa Representatif | Apakah SOTA? | Sumber |
 |---|----------|----------------|----------------------|-------------|--------|
-| 1 | Sistem penggajian manual | Menyelesaikan masalah penggajian dengan proses tradisional tanpa otomasi | Mewakili praktik umum di institusi pendidikan sebelum adopsi sistem digital | Bukan, tapi common practice | Studi sebelumnya seperti Agus & Gustiawan (2021) yang membandingkan dengan manual |
-| 2 | Metode pengembangan waterfall | Pendekatan tradisional untuk pengembangan sistem informasi | Mewakili metode klasik sebelum agile seperti XP | Bukan, tapi baseline standar | Sommerville (2016) dan White et al. (2020) yang membandingkan XP dengan waterfall |
+| 1 | Pengujian CRUD tanpa indexing dan konfigurasi default (Ahsa et al., 2023) | Menguji performa CRUD MySQL vs PostgreSQL — masalah yang sama | Mewakili common practice di studi perbandingan DBMS sebelumnya | Bukan SOTA, tapi baseline standar | Ahsa et al. (2023), Winata & Putra (2021) |
+| 2 | Benchmarking Sysbench dengan Independent Sample T-Test (Wendri et al., 2022) | Menggunakan metode statistik rigor dan setup client-server | Mewakili pendekatan yang lebih rigor dalam benchmarking DBMS | Lebih mendekati SOTA karena menggunakan statistical testing | Wendri et al. (2022), Hairah (2020) |
 
 **Apakah pemilihan baseline ini bisa dianggap straw man?** [ ] Ya / [x] Tidak
-> Justifikasi: Baseline dipilih karena relevan dengan masalah (penggajian manual adalah masalah utama) dan representatif (waterfall adalah metode standar sebelum agile). Tidak straw man karena justifikasi berdasarkan literatur yang menunjukkan perbandingan fair.
+> Justifikasi: Baseline dipilih karena relevan (menguji performa MySQL vs PostgreSQL) dan representatif (mewakili pendekatan umum dan rigor). Tidak straw man karena kedua DBMS akan diuji pada kondisi yang setara (fair comparison) — konfigurasi identik, indexing strategy dikontrol sebagai variabel, dan workload CRUD yang sama.
 
 ---
 
@@ -180,4 +186,4 @@ Pilih 2 baseline dari literatur yang sudah dibaca.
 > Apa perbedaan antara "belum ada yang meneliti ini" (klaim tanpa bukti) dengan research gap yang valid? Bagaimana cara membuktikan bahwa sebuah gap benar-benar ada?
 
 **Jawaban:**
-> "Belum ada yang meneliti ini" adalah klaim subjektif tanpa dukungan bukti, sering kali berdasarkan intuisi atau pengetahuan terbatas, yang bisa salah karena literatur yang luas. Research gap yang valid didukung oleh pencarian sistematis, analisis pola dari studi sebelumnya, dan identifikasi area yang belum dieksplorasi dengan signifikansi yang jelas. Untuk membuktikan gap ada, lakukan pencarian terdokumentasi menggunakan query Boolean di database akademik, snowballing backward dan forward, serta analisis concept-centric untuk menemukan pola, kontradiksi, atau keterbatasan yang konsisten.
+> "Belum ada yang meneliti ini" adalah klaim subjektif tanpa dukungan bukti, sering kali berdasarkan intuisi atau pengetahuan terbatas, yang bisa salah karena literatur yang luas. Research gap yang valid didukung oleh pencarian sistematis, analisis pola dari studi sebelumnya, dan identifikasi area yang belum dieksplorasi dengan signifikansi yang jelas. Untuk membuktikan gap ada, lakukan pencarian terdokumentasi menggunakan query Boolean di database akademik, snowballing backward dan forward, serta analisis concept-centric untuk menemukan pola, kontradiksi, atau keterbatasan yang konsisten. Dalam kasus ini, gap dibuktikan oleh inkonsistensi hasil antar studi (4 paper menyimpulkan PostgreSQL lebih cepat, 1 paper menyimpulkan MySQL lebih baik) dan ketiadaan kontrol indexing/optimization di kelima paper tersebut.
