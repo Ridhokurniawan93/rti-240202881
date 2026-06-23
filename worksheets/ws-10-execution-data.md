@@ -70,21 +70,25 @@ EXECUTION PLAN
 
 | Run # | Skenario | Seed | Parameter | Status | Waktu | Output File |
 |-------|----------|------|-----------|--------|-------|-------------|
-| 1     |          |      |           |        |       |             |
-| 2     |          |      |           |        |       |             |
+| 1     | C1, PostgreSQL none default, SELECT 100K | 42   | no-index, default query | Done   | 2026-06-23 10:00 | run-B1-SELECT-100K-r1.json |
+| 2     | C1, PostgreSQL none default, INSERT 100K | 123  | no-index, default insert | Done   | 2026-06-23 10:12 | run-B1-INSERT-100K-r2.json |
+| 3     | C1, PostgreSQL none default, UPDATE 100K | 456  | no-index, default update | Done   | 2026-06-23 10:25 | run-B1-UPDATE-100K-r3.json |
+| 4     | C1, PostgreSQL none default, DELETE 100K | 789  | no-index, default delete | Done   | 2026-06-23 10:38 | run-B1-DELETE-100K-r4.json |
+| 5     | C2, PostgreSQL single default, SELECT 100K | 1024 | single-index, default query | Planned | 2026-06-23 11:00 | run-B2-SELECT-100K-r1.json |
 | ...   |          |      |           |        |       |             |
 
 Jumlah replikasi per sel : 5
 Total runs               : 800 (8 kondisi × 4 CRUD × 5 volume × 5 replikasi)
 
 DATA LOG (per run):
-  Run ID    : ____________________
-  Timestamp : ____________________
-  Skenario  : ____________________
-  Input     : ____________________
-  Output    : ____________________
-  Anomali   : ____________________
-  Catatan   : ____________________
+  Run ID    : run-B1-SELECT-100K-r1
+  Timestamp : 2026-06-23T10:00:00Z
+  Skenario  : C1 | PostgreSQL | none | default | SELECT | 100K
+  Input     : 100.000 record; seed=42; no-index; default query
+  Output    : 245.3 ms avg; 12.1 ms std; throughput=4.12k QPS
+  Anomali   : none
+  Catatan   : Run normal, Docker CPU 22%, memory 130MB, thermal stable
+
 ```
 
 ---
