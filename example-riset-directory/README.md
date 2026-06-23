@@ -2,7 +2,7 @@
 
 **Judul:** Performance Comparison of PostgreSQL vs MySQL on CRUD Workload with Indexing Strategy Variation
 
-**Target publikasi:** Sinta 2 (Journal of Database Systems) atau Scopus Q3-Q4 (IEEE Transactions on Software Engineering)
+**Target publikasi:** Sinta 6 (Journal of Database Systems) atau Scopus Q3-Q4 (IEEE Transactions on Software Engineering)
 
 ## Ringkasan
 
