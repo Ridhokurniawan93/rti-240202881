@@ -1,92 +1,159 @@
-# Arsitektur & Skema Database
+# Skema Database & Strategi Indexing
 
-Dokumen ini menjelaskan desain arsitektur API Gateway untuk mitigasi JWKS Endpoint Flooding dan skema database yang digunakan.
+Dokumen ini menjelaskan desain skema database `app_playstore` dan strategi indexing yang diuji dalam benchmark eksperimen.
 
-## 1. Arsitektur Umum
+## 1. Skema Database: app_playstore
 
-Gateway menerima permintaan dengan header JWT. Alur resolusi `kid`:
+Tabel `app_playstore` terinspirasi dari dataset Google Playstore, dengan 19 kolom mencakup metadata aplikasi:
 
-1. Cek Redis positive cache `jwks:kid:<kid>`.
-2. Jika miss, cek Redis negative cache `jwks:negative:<kid>`.
-3. Jika miss lagi, lakukan `rate_limit` di PostgreSQL.
-4. Jika tidak melebihi ambang, query `signing_keys` di PostgreSQL.
-5. Jika ditemukan, simpan JWK ke negative cache atau positive cache sesuai hasil.
+```sql
+CREATE TABLE app_playstore (
+    id              INT/SERIAL PRIMARY KEY,
+    app_name        VARCHAR(255) NOT NULL,
+    app_id          VARCHAR(100) NOT NULL,
+    category        VARCHAR(100) NOT NULL,
+    rating          FLOAT DEFAULT 0.0,
+    rating_count    INT DEFAULT 0,
+    installs        VARCHAR(50),
+    free            BOOLEAN/TINYINT(1) DEFAULT TRUE,
+    price           FLOAT DEFAULT 0.0,
+    currency        VARCHAR(10) DEFAULT 'USD',
+    size            VARCHAR(20),
+    min_android     VARCHAR(50),
+    developer_id    VARCHAR(100),
+    released        DATE,
+    last_updated    DATE,
+    content_rating  VARCHAR(50),
+    ad_supported    BOOLEAN/TINYINT(1) DEFAULT FALSE,
+    in_app_purchases BOOLEAN/TINYINT(1) DEFAULT FALSE,
+    editors_choice  BOOLEAN/TINYINT(1) DEFAULT FALSE,
+    scraped_time    TIMESTAMP DEFAULT NOW()
+);
+```
 
-## 2. Diagram Mermaid
+**Perbedaan PostgreSQL vs MySQL:**
+- PostgreSQL: `SERIAL PRIMARY KEY` vs MySQL: `INT AUTO_INCREMENT PRIMARY KEY`
+- PostgreSQL: `BOOLEAN` vs MySQL: `TINYINT(1)`
+- PostgreSQL: `TIMESTAMP` vs MySQL: `DATETIME`
+
+## 2. Strategi Indexing yang Diuji
+
+Eksperimen menguji **tiga strategi indexing** sebagai kondisi eksperimen:
+
+### Strategi 1: NO INDEX (Baseline)
+
+Hanya primary key (PK) yang ada, tidak ada secondary index. Semua query CRUD berjalan dengan full table scan (FTS).
+
+```sql
+-- Hanya PK, tidak ada index tambahan
+```
+
+**Karakteristik:**
+- INSERT/UPDATE/DELETE: cepat (tidak perlu maintain index)
+- SELECT: lambat (full table scan pada volume besar)
+- Space efficient
+
+### Strategi 2: SINGLE COLUMN INDEX
+
+Index pada satu kolom yang sering diquery (`category` sebagai contoh umum pada filtering).
+
+```sql
+CREATE INDEX idx_app_playstore_category ON app_playstore(category);
+```
+
+**Karakteristik:**
+- INSERT/UPDATE/DELETE: sedikit lebih lambat (maintain 1 index)
+- SELECT dengan filter `WHERE category = ?`: lebih cepat (B-tree lookup)
+- Moderate space overhead
+
+### Strategi 3: COMPOSITE INDEX
+
+Index pada multiple kolom untuk query dengan multiple filter atau complex WHERE clause.
+
+```sql
+CREATE INDEX idx_app_playstore_category_rating ON app_playstore(category, rating DESC);
+```
+
+**Karakteristik:**
+- INSERT/UPDATE/DELETE: paling lambat (maintain composite index)
+- SELECT dengan filter `WHERE category = ? AND rating > ?`: paling cepat (covering index)
+- Highest space overhead
+
+## 3. Operasi CRUD dalam Benchmark
+
+Setiap operasi CRUD dijalankan dengan pola query realistis:
+
+### SELECT (Read)
+
+```sql
+SELECT * FROM app_playstore WHERE category = ?;
+SELECT * FROM app_playstore WHERE rating > ? ORDER BY rating DESC LIMIT 100;
+```
+
+**Expected Impact Indexing:**
+- No-index: Full table scan, latency meningkat linear dengan volume
+- Single-index: B-tree lookup on `category`, latency berkurang signifikan
+- Composite-index: Covering index, latency paling rendah
+
+### INSERT (Create)
+
+```sql
+INSERT INTO app_playstore (app_name, app_id, category, rating, ...) 
+VALUES (?, ?, ?, ?, ...);
+```
+
+**Expected Impact Indexing:**
+- No-index: Fastest (only update PK)
+- Single-index: Slower (update PK + 1 index)
+- Composite-index: Slowest (update PK + composite index)
+
+### UPDATE (Update)
+
+```sql
+UPDATE app_playstore SET rating = ?, rating_count = ? 
+WHERE app_id = ?;
+```
+
+**Expected Impact Indexing:**
+- Similar to INSERT; composite index adds maintenance cost
+
+### DELETE (Delete)
+
+```sql
+DELETE FROM app_playstore WHERE app_id = ?;
+```
+
+**Expected Impact Indexing:**
+- No-index: Sequential scan to find record
+- Single/Composite-index: Index lookup, then delete
+- Trade-off less severe than INSERT
+
+## 4. Diagram Alur Eksperimen
 
 ```mermaid
 flowchart TD
-  A[Request JWT masuk] --> B{Cek Redis positive cache}
-  B -- HIT --> C[Verifikasi signature]
-  B -- MISS --> D{Cek Redis negative cache}
-  D -- HIT --> E[Tolak 401 invalid_kid]
-  D -- MISS --> F[Rate limit PostgreSQL]
-  F -- exceed --> G[Tolak 429 rate_limited]
-  F -- ok --> H[Query signing_keys Postgres]
-  H -- found --> I[Set Redis positive cache]
-  H -- found --> C
-  H -- not found --> J[Set Redis negative cache]
-  J --> K[Tolak 401 invalid_kid]
+    A["Kondisi Eksperimen<br/>DBMS × Indexing × Volume"] --> B["Generate Dataset<br/>50K / 100K / 250K / 500K / 1M"]
+    B --> C["Create Indexes<br/>sesuai Strategi"]
+    C --> D["Execute CRUD Queries<br/>SELECT / INSERT / UPDATE / DELETE"]
+    D --> E["Measure Response Time<br/>Throughput CPU Memory"]
+    E --> F["Aggregate 5 Replikasi<br/>Hitung Mean ± Std CV"]
+    F --> G["Statistical Analysis<br/>ANOVA Tukey Post-hoc"]
 ```
 
-## 3. Komponen Sistem
+## 5. Faktor Kontrol (Control Variable)
 
-- **API Gateway (Go + Echo)**
-- **Redis**
-  - Positive cache: `jwks:kid:<kid>`
-  - Negative cache: `jwks:negative:<kid>`
-- **PostgreSQL**
-  - `signing_keys` sebagai source of truth
-  - `rate_limit_counters` sebagai counter permanen
+- **Hardware:** Spesifikasi tetap (CPU, RAM, storage type)
+- **DBMS Version:** PostgreSQL 16.3, MySQL 8.0.32
+- **Query Pattern:** Standardized, tidak ada ad-hoc optimization
+- **Data Distribution:** Uniform random, representatif Playstore real-world
+- **Warm-up:** Cache warm sebelum measurement untuk fair comparison
 
-## 4. Skema PostgreSQL
+## 6. Hipotesis Performa
 
-```sql
-CREATE TABLE signing_keys (
-    kid VARCHAR(255) PRIMARY KEY,
-    kty VARCHAR(10) NOT NULL DEFAULT 'RSA',
-    alg VARCHAR(10) NOT NULL DEFAULT 'RS256',
-    use_type VARCHAR(10) NOT NULL DEFAULT 'sig',
-    n TEXT NOT NULL,
-    e TEXT NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    expires_at TIMESTAMPTZ,
-    revoked_at TIMESTAMPTZ
-);
-
-CREATE INDEX idx_signing_keys_active ON signing_keys (kid) WHERE is_active = TRUE;
-
-CREATE TABLE rate_limit_counters (
-    client_ip INET NOT NULL,
-    window_start TIMESTAMPTZ NOT NULL,
-    request_count INTEGER NOT NULL DEFAULT 0,
-    blocked_count INTEGER NOT NULL DEFAULT 0,
-    PRIMARY KEY (client_ip, window_start)
-);
-```
-
-### Upsert counter atomik
-
-```sql
-INSERT INTO rate_limit_counters (client_ip, window_start, request_count)
-VALUES ($1, $2, 1)
-ON CONFLICT (client_ip, window_start)
-DO UPDATE SET request_count = rate_limit_counters.request_count + 1
-RETURNING request_count;
-```
-
-## 5. Kunci Redis
-
-- `jwks:kid:<kid>` — JWK valid, TTL ~300 detik.
-- `jwks:negative:<kid>` — marker invalid, TTL ~60 detik.
-
-## 6. Pertimbangan Desain
-
-- **Fail-closed**: jika PostgreSQL tidak tersedia, request ditolak.
-- **Fail-open**: jika Redis down, gateway tetap dapat memverifikasi via PostgreSQL.
-- **Mode eksperimen**: `CACHE_MODE=none` untuk baseline tanpa cache/rate-limit dan `CACHE_MODE=hybrid` untuk mitigasi penuh.
-
-## 7. Hubungan ke Implementasi
-
-Desain ini menjadi dasar implementasi Tahap 2 dan pengujian Tahap 3. Semua parameter utama dikendalikan oleh environment variable dan konfigurasi deploy.
+| Perbandingan | Hipotesis | Rationale |
+|-------------|-----------|-----------|
+| SELECT: No-index vs Composite-index | Composite ~72% lebih cepat | Index eliminates full scan |
+| INSERT: No-index vs Composite-index | Composite ~28% lebih lambat | Index maintenance overhead |
+| PostgreSQL vs MySQL (no-index) | PostgreSQL ~27% lebih cepat | Better query planner |
+| PostgreSQL vs MySQL (composite-index) | PostgreSQL ~19% lebih cepat | Efficient index structure |
+   

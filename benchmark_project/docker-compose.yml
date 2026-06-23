@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16.3
+    container_name: benchmark_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: benchmark
+      POSTGRES_DB: benchmark_db
+    ports:
+      - "5433:5432"
+    mem_limit: 2g
+    cpus: 2
+    command: >
+      postgres
+      -c shared_buffers=128MB
+      -c max_connections=50
+      -c work_mem=4MB
+      -c maintenance_work_mem=64MB
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  mysql:
+    image: mysql:8.0.38
+    container_name: benchmark_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: benchmark
+      MYSQL_DATABASE: benchmark_db
+    ports:
+      - "3306:3306"
+    mem_limit: 2g
+    cpus: 2
+    command: >
+      --innodb-buffer-pool-size=128M
+      --max-connections=50
+      --innodb-log-file-size=64M
+      --innodb-flush-log-at-trx-commit=1
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  pg_data:
+  mysql_data:

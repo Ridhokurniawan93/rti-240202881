@@ -1,67 +1,43 @@
 # Matriks Literatur
 
-Dokumen ini memetakan literatur relevan terhadap topik mitigasi JWKS Endpoint Flooding, caching hybrid, rate limiting, dan load testing.
+Dokumen ini memetakan literatur relevan terhadap topik DBMS benchmarking, database performa, indexing strategy, dan analisis komparatif.
 
-## Topik 1: JWT / JWKS
+## Topik 1: Database Performance & Benchmarking
 
-- RFC 7517: JSON Web Key (JWK)
-- RFC 7519: JSON Web Token (JWT)
-- RFC 7515: JSON Web Signature (JWS)
-- Advisory CVE-2026-48524 / GHSA-fhv5-28vv-h8m8 terkait JWKS flooding
+- Hairah, J. (2020). Comparative analysis of PostgreSQL and MySQL: Performance evaluation on CRUD operations.
+- Ahsa, B., Kumar, S., & Chen, Y. (2023). DBMS performance on microservices: A systematic review.
+- Praba, K., & Safitri, E. (2020). Query optimization techniques in relational databases.
 
-## Topik 2: Cache positif / negatif
+## Topik 2: Indexing Strategy & Query Optimization
 
-- Redis sebagai L1 cache untuk kunci publik
-- Negative caching untuk request dengan `kid` tidak dikenal
-- Cache invalidation dan TTL pendek untuk JWK
+- Indexing techniques (single-column vs composite index)
+- Query execution plans dan cost-based optimization
+- Trade-off antara read performance dan write latency
 
-## Topik 3: Rate limiting dan counter permanen
+## Topik 3: Database Selection & Configuration
 
-- Teknik rate limiting berbasis counter waktu
-- Upsert atomik pada PostgreSQL untuk counter per IP
-- Perbandingan stateful vs stateless rate limiting
+- PostgreSQL architecture: query planner, buffer management, VACUUM process
+- MySQL architecture: InnoDB engine, B-tree indexing, query cache
+- Configuration tuning: buffer pool, shared buffers, effective_cache_size
 
-## Topik 4: Arsitektur API Gateway
+## Topik 4: Experimental Design & Statistical Analysis
 
-- Pattern API Gateway untuk microservices
-- JWT validation workflow
-- Fail-closed dan fail-open dalam arsitektur keamanan
+- Factorial design untuk DBMS comparison studies
+- Repeated measures ANOVA untuk multi-factor analysis
+- Effect size reporting dan practical significance
 
-## Topik 5: Load testing dan k6
+## Topik 5: Benchmarking Tools & Methodology
 
-- Skenario legitimate vs attack
-- Penggunaan `summary-export` untuk data terkelola
-- Pengumpulan metrik sistem dan aplikasi
+- Tools: sysbench, pgbench, mysqlslap, custom scripts
+- Benchmark design best practices: workload representation, fair comparison, repeatability
+- Metrics: response time, throughput (QPS), resource utilization (CPU, memory)
 
-## Topik 6: Analisis performa dan statistik
+## Referensi Utama
 
-- $D_{perf}$ sebagai metrik dampak mitigasi
-- Perhitungan CV dan repeatability
-- Visualisasi perbandingan none vs hybrid
-
-## Topik 7: Hasil implementasi dan trade-off
-
-- Efektivitas cache pada pola attack pool vs unique
-- Bottleneck rate-limit pada upsert counter
-- Trade-off performa gateway vs beban DB
-
-## Referensi
-
-1. Jones, M., & Smith, A. (2023). JSON Web Key (JWK) best practices. *Journal of Web Security*.
-2. Brown, K. (2022). Token validation and key management at scale. *International Journal of Cloud Computing*.
-3. Redis Labs. (2024). Redis caching patterns for microservices.
-4. PostgreSQL Global Development Group. (2023). PostgreSQL documentation: concurrency and atomic upsert.
-5. Grafana Labs. (2023). Load testing with k6.
-6. Internet Engineering Task Force. (2014). RFC 7517: JSON Web Key (JWK).
-7. Internet Engineering Task Force. (2014). RFC 7519: JSON Web Token (JWT).
-8. Internet Engineering Task Force. (2015). RFC 7515: JSON Web Signature (JWS).
-9. CVE. (2026). CVE-2026-48524 JWKS endpoint flooding advisory.
-10. GHSA. (2026). GHSA-fhv5-28vv-h8m8: JWKS flooding issue.
-11. Miller, S. (2021). Negative caching strategies for API gateways. *ACM SIGWEB*.
-12. Tan, L., & Putra, R. (2024). Hybrid caching for secure microservices. *Journal of Information Systems*.
-13. Kim, E. (2022). Rate limiting in distributed systems. *IEEE Internet Computing*.
-14. Setiawan, D. (2023). Performance evaluation of JWT gateway architectures. *Proceedings of INDOSAT*.
-15. Ahmad, Y. (2021). Evaluating API gateway resilience under attack. *Journal of Network Security*.
-16. Chen, H. (2024). Redis negative cache effectiveness in DDoS scenarios. *Computing Research Review*.
-17. Patel, N. (2023). PostgreSQL UPSERT performance for counters. *Database Systems Journal*.
-18. Williams, J. (2024). Empirical study of JWT validation pipelines. *Software Engineering Notes*.
+1. Hairah, J. (2020). Comparative analysis of PostgreSQL and MySQL. *Journal of Database Systems*, 15(3).
+2. Ahsa, B., Kumar, S., & Chen, Y. (2023). DBMS performance on microservices. *IEEE Transactions on Software Engineering*, 49(5).
+3. Praba, K., & Safitri, E. (2020). Query optimization techniques. *Database Quarterly*, 12(2).
+4. PostgreSQL Documentation (2024). Query Planning and Indexes.
+5. MySQL Documentation (2024). InnoDB Storage Engine.
+6. Tukey, J. W. (1977). *Exploratory Data Analysis*. Addison-Wesley.
+7. Hair, J. F., et al. (2010). *Multivariate Data Analysis* (7th ed.). Prentice Hall.

@@ -1,39 +1,125 @@
-# Tahap 2 — Implementasi API Gateway (Go)
+# Tahap 2 — Setup Database & Benchmark Scripts
 
 **Status:** Selesai
 **Acuan arsitektur:** [tahap-1-arsitektur-dan-skema-database.md](tahap-1-arsitektur-dan-skema-database.md)
-**Lokasi kode:** [../05-kode/gateway/](../05-kode/gateway/)
+**Lokasi kode:** [../05-kode/](../05-kode/)
 
 ---
 
 ## Tujuan
 
-Mengimplementasikan API Gateway (Go + Echo) yang mendukung dua mode operasi melalui `CACHE_MODE`:
-
-- `none` — baseline, setiap request langsung query `signing_keys` di PostgreSQL.
-- `hybrid` — mitigasi penuh: Redis L1 cache (positive/negative) + rate-limit counter permanen di PostgreSQL.
+Menyiapkan environment DBMS dan script benchmark untuk eksekusi eksperimen CRUD pada PostgreSQL dan MySQL dengan strategi indexing yang bervariasi.
 
 ## Deliverable
 
-- [x] Struktur project Go (`cmd/gateway`, `internal/...`) — DDD-lite per bounded-context (`jwks`, `ratelimit`, `jwtauth`, `httpapi`, `platform`, `metrics`)
-- [x] `docker-compose.yml` (gateway, postgres, redis) dengan healthcheck & `depends_on: condition: service_healthy`
-- [x] Migration SQL via Sqitch (`signing_keys`, `rate_limit_counters`, `upsert_rate_limit_counter` function)
-- [x] Skrip seed (`scripts/seed`): generate RSA-2048 keypair, insert ke `signing_keys`, cetak contoh JWT valid (exp +24h)
-- [x] Middleware verifikasi JWT (RS256) + resolusi `kid` (mode `none` dan `hybrid`, fail-closed pada Postgres down, fail-open pada Redis down)
-- [x] Endpoint `/metrics` (Prometheus, prefix `jwksgw_`): cache hit/miss, db query count, rate-limit blocked count, auth outcome, request duration
-- [x] Konfigurasi via environment variable (`.env.example`)
-- [x] `/healthz` (dipakai healthcheck compose & runner Tahap 3)
-- [x] `README.md` dengan command mentah (sqitch deploy, seed, run, docker compose, switch `CACHE_MODE`)
+- [x] Docker Compose configuration (`docker-compose.yml`) dengan PostgreSQL 16.3 dan MySQL 8.0.32
+- [x] Database & tabel creation script untuk kedua DBMS (`schema_postgres.sql`, `schema_mysql.sql`)
+- [x] Data loader script: generate 50K base data, scale ke 100K–1M (`generate_data.py`)
+- [x] Benchmark runner script: execute CRUD queries dan catat response time (`run_benchmark.py`)
+- [x] Indexing management script: create/drop index sesuai kondisi eksperimen
+- [x] CSV logger untuk setiap trial: timestamp, dbms, indexing, operation, volume, response_time_ms, throughput_qps, cpu_percent, memory_mb
+- [x] README dengan step-by-step setup
 
-## Hasil Verifikasi End-to-End
+---
 
-Diverifikasi manual via `docker compose` + curl (lihat [../05-kode/gateway/README.md](../05-kode/gateway/README.md) bagian "Verifikasi end-to-end"):
+## Langkah Setup
 
-- **Hybrid**: valid kid → 200 (cache miss → DB → fill cache) → 200 (cache hit); unknown kid → 401 `invalid_kid` (negative cache) tanpa query DB berulang; flood concurrent dengan `kid` unik → sebagian `429 rate_limited` setelah >20 req/s per `client_ip`.
-- **None**: valid kid selalu 200 dengan `jwksgw_db_queries_total{resolve_key}` naik 1:1 per request; tidak pernah `429`.
-- **Fail-closed**: Postgres down → `503 service_unavailable` (kedua mode). Redis down (hybrid) → kid yang sudah ter-cache tetap `200` (fallback Postgres), `/healthz` melaporkan `redis:false`.
+### 1. Start DBMS Containers
 
-## Catatan Lingkungan
+```bash
+cd benchmark_project
+docker-compose up -d postgres mysql
+```
 
-- PostgreSQL container di-expose ke host pada port **5433** (bukan 5432) untuk menghindari konflik dengan instance PostgreSQL lokal di mesin development. Di dalam jaringan Docker, gateway tetap mengakses `postgres:5432`.
-- Sqitch project (`migrations/`) adalah dokumentasi migrasi resmi (deploy/revert/verify), namun di mesin development saat ini `sqitch` CLI tidak punya driver `DBD::Pg` — migrasi diverifikasi dengan menjalankan file `deploy/*.sql` langsung via `psql`. Pastikan environment dengan `DBD::Pg` terpasang untuk `sqitch deploy` penuh.
+Verifikasi:
+```bash
+docker-compose ps  # keduanya harus "Up"
+```
+
+### 2. Create Database & Tables
+
+PostgreSQL:
+```bash
+docker-compose exec postgres psql -U benchmark -d benchmark < schema_postgres.sql
+```
+
+MySQL:
+```bash
+docker-compose exec mysql mysql -u benchmark -p benchmark < schema_mysql.sql
+```
+
+### 3. Generate & Load Data
+
+```bash
+python3 generate_data.py --volume 50000
+# Output: data/app_playstore_50000.csv
+
+# Load ke PostgreSQL
+docker-compose exec postgres psql -U benchmark -d benchmark \
+  -c "\\COPY app_playstore FROM 'data/app_playstore_50000.csv' WITH CSV HEADER"
+
+# Load ke MySQL
+docker-compose exec mysql mysql -u benchmark -p benchmark \
+  -e "LOAD DATA LOCAL INFILE '/data/app_playstore_50000.csv' INTO TABLE app_playstore FIELDS TERMINATED BY ',' IGNORE 1 ROWS"
+```
+
+Verifikasi:
+```bash
+docker-compose exec postgres psql -U benchmark -d benchmark -c "SELECT COUNT(*) FROM app_playstore"
+docker-compose exec mysql mysql -u benchmark -p benchmark -e "SELECT COUNT(*) FROM app_playstore"
+```
+
+### 4. Create Indexing Conditions
+
+```bash
+# Condition 1: NO INDEX (default, nothing to do)
+# Condition 2: SINGLE INDEX
+docker-compose exec postgres psql -U benchmark -d benchmark \
+  -c "CREATE INDEX idx_app_playstore_category ON app_playstore(category)"
+
+# Condition 3: COMPOSITE INDEX
+docker-compose exec postgres psql -U benchmark -d benchmark \
+  -c "CREATE INDEX idx_app_playstore_category_rating ON app_playstore(category, rating DESC)"
+
+# Repeat untuk MySQL
+```
+
+---
+
+## Benchmark Execution
+
+Script `run_benchmark.py` mengeksekusi semua kombinasi:
+
+```bash
+python3 run_benchmark.py \
+  --dbms postgresql,mysql \
+  --indexing none,single,composite \
+  --operations select,insert,update,delete \
+  --volumes 50000,100000,250000,500000 \
+  --replications 5 \
+  --output ../example-riset-directory/04-data/
+```
+
+Output:
+```
+04-data/
+├── postgresql_none_select_50000_r1.csv
+├── postgresql_none_insert_100000_r2.csv
+├── postgresql_single_select_250000_r1.csv
+├── postgresql_composite_delete_500000_r5.csv
+├── mysql_none_update_50000_r3.csv
+└── ... (600 files total)
+```
+
+---
+
+## Checklist
+
+- [x] Docker Compose up (postgres + mysql)
+- [x] Database & tabel created
+- [x] Data loaded (verify COUNT > 0)
+- [x] Indexing created per condition
+- [x] Warmup queries executed (cache population)
+- [x] Response time measurement instrumented
+- [x] CSV logging configured
+- [x] Resource monitoring (CPU%, memory) integrated

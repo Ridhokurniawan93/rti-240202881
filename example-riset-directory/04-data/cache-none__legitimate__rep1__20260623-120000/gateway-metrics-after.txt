@@ -1,4 +1,0 @@
-# gateway metrics after run
-jwksgw_requests_total 1950
-jwksgw_cached_responses_total 0
-jwksgw_failed_requests_total 3
